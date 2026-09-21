@@ -331,15 +331,38 @@
             runAppSearch();
         }
 
-        function runAppSearch() {
+        async function runAppSearch() {
             const query = document.getElementById("queryInput").value;
             if (!query || query.trim() === "") { alert("Please enter a query in the search bar!"); return; }
 
-            // INSTANT result from local mock database
-            const key = getMatchKey(query);
-            const match = mockDB[key];
-            const data = { response: { contexts: [match] } };
-            renderCards(data);
+            // Show loading state
+            document.getElementById("mainTitle").innerHTML = `Analyzing Issue... <i class='bx bx-loader-alt bx-spin'></i>`;
+            document.getElementById("results").innerHTML = "";
+
+            try {
+                // Call backend API with 30s timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+                const res = await fetch("https://guidepost-api.onrender.com/v1/troubleshoot", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ query: query, siis_response: "User reported issue: " + query + ". System context baseline." }),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                if (!res.ok) throw new Error("API Error");
+                const data = await res.json();
+                renderCards(data);
+
+            } catch (e) {
+                // Fallback to local mock if backend is down
+                const key = getMatchKey(query);
+                const match = mockDB[key];
+                const data = { response: { contexts: [match] } };
+                renderCards(data);
+            }
         }
 
         function renderCards(data) {
