@@ -8,20 +8,13 @@
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #F1EFE7;
-            --sidebar-bg: #0E0E0E;
-            --card-bg: #FFFFFF;
-            --text-main: #1A1A1A;
-            --text-muted: #666666;
-            --tag-auto: #DCEE77;
-            --tag-manual: #698BFF;
-            --tag-critical: #FFB3B3;
-            --chart-dark: #0A0A0A;
-            --chart-light: #F2F4F7;
+            --bg-color: #F1EFE7; --sidebar-bg: #0E0E0E; --card-bg: #FFFFFF;
+            --text-main: #1A1A1A; --text-muted: #666666;
+            --tag-auto: #DCEE77; --tag-manual: #698BFF; --tag-critical: #FFB3B3;
+            --chart-dark: #0A0A0A; --chart-light: #F2F4F7;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        
         body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; padding: 20px; display: flex; gap: 30px; overflow: hidden; }
 
         /* Sidebar */
@@ -36,10 +29,9 @@
         /* Main Content */
         .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 10px; }
         
-        /* Top Header */
+        /* Header */
         .header { display: flex; align-items: center; gap: 15px; width: 100%;}
         
-        /* Enhanced Search Bar with Mobile Button */
         .search-container { flex-grow: 1; display: flex; flex-direction: column; gap: 8px;}
         .search-bar { background: var(--card-bg); border-radius: 30px; display: flex; align-items: center; padding: 8px 12px 8px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .search-bar i { color: #888; font-size: 20px; margin-right: 10px; }
@@ -47,10 +39,8 @@
         .mobile-search-btn { background: var(--sidebar-bg); color: white; border: none; border-radius: 20px; padding: 8px 16px; font-weight: 600; cursor: pointer; transition: 0.2s;}
         .mobile-search-btn:hover { background: #333; }
         
-        .header-btn { background: var(--card-bg); border: none; padding: 12px 20px; border-radius: 30px; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 8px; transition: 0.2s;}
-        .header-btn:hover { background: #EEE; }
-        .btn-black { background: var(--sidebar-bg); color: white; }
-        .btn-black:hover { background: #333; }
+        .header-btn { background: var(--sidebar-bg); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 8px; transition: 0.2s;}
+        .header-btn:hover { background: #333; }
 
         /* Suggested Queries */
         .suggested-queries { display: flex; gap: 10px; align-items: center; font-size: 12px; margin-left: 10px;}
@@ -58,13 +48,13 @@
         .suggestion-chip { background: white; border-radius: 12px; padding: 4px 10px; cursor: pointer; border: 1px solid #DDD; transition: 0.2s;}
         .suggestion-chip:hover { border-color: #888; background: #F8F9FA;}
 
-        /* Content Sections */
+        /* Sections */
         .section-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .badge-count { background: var(--sidebar-bg); color: white; font-size: 12px; padding: 2px 8px; border-radius: 12px; }
 
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
 
-        /* Task Card */
+        /* Card */
         .card { background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 12px; }
         .card-header { display: flex; justify-content: space-between; align-items: center; }
         .tag { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 12px; color: #111; text-transform: capitalize; }
@@ -74,18 +64,15 @@
         
         .card-title { font-size: 16px; font-weight: 600; }
         .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
-        
         .card-steps { background: #F8F9FA; padding: 10px 15px; border-radius: 12px; font-size: 12px; color: #444; margin-top: 5px; }
         .card-steps ul { padding-left: 15px; margin: 0; }
         .card-steps li { margin-bottom: 4px; }
-        
         .card-footer { margin-top: auto; display: flex; justify-content: flex-end; border-top: 1px solid #EEE; padding-top: 12px; }
         .launch-btn { background: transparent; border: 1px solid #DDD; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .launch-btn:hover { background: var(--sidebar-bg); color: white; border-color: var(--sidebar-bg); }
 
-        /* Right Panel Widgets */
+        /* Right Panel */
         .right-panel { width: 320px; display: flex; flex-direction: column; gap: 20px; flex-shrink: 0; overflow-y: auto; }
-
         .widget-dark { background: var(--chart-dark); color: white; border-radius: 24px; padding: 24px; }
         .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .widget-header h3 { font-size: 16px; font-weight: 500; }
@@ -94,39 +81,27 @@
 
         .widget-light { background: #FFFFFF; border-radius: 24px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: relative; }
         .widget-light::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(220, 227, 255, 0.3) 100%); border-radius: 24px; pointer-events: none; }
-
         .stat-value { font-size: 24px; font-weight: 600; margin-bottom: 5px; position: relative; z-index: 1;}
         .stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; position: relative; z-index: 1;}
 
-        /* CSS Donut Chart */
+        /* CSS Donut */
         .donut-wrapper { position: relative; width: 150px; height: 150px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
-        .donut { 
-            width: 100%; height: 100%; border-radius: 50%; 
-            background: conic-gradient(
-                #DCEE77 0% 25%, 
-                #698BFF 25% 50%, 
-                #82CDB3 50% 75%, 
-                #7A73AB 75% 100%
-            );
-            transition: 1s ease-in-out;
-        }
+        .donut { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(#DCEE77 0% 25%, #698BFF 25% 50%, #82CDB3 50% 75%, #7A73AB 75% 100%); transition: 1s ease-in-out; }
         .donut-center { position: absolute; width: 90px; height: 90px; background: var(--chart-dark); border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .donut-center h2 { color: white; font-size: 24px; margin: 0; }
         .donut-center p { color: #888; font-size: 11px; margin: 0; }
-        
         .legend { display: flex; justify-content: center; gap: 12px; margin-top: 20px; font-size: 11px; color: #AAA; }
         .legend div { display: flex; align-items: center; gap: 4px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; }
 
-        /* CSS Bar Chart */
+        /* CSS Bar */
         .bar-chart { display: flex; align-items: flex-end; justify-content: space-between; height: 120px; position: relative; z-index: 1; }
         .bar { width: 12%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; cursor: pointer;}
-        .bar-fill { width: 100%; background: #A3B8FF; border-radius: 6px; transition: height 0.5s ease; position: relative;}
-        .bar:hover .bar-fill { background: #698BFF; }
+        .bar-fill { width: 100%; background: #A3B8FF; border-radius: 6px; transition: height 0.5s ease, background 0.2s; position: relative;}
+        .bar:hover .bar-fill { background: #698BFF !important; }
         .bar span { font-size: 10px; color: #888; margin-top: 8px; }
         
-        /* Popup bubble for active bar */
-        .tooltip { position: absolute; top: -30px; background: #0E0E0E; color: white; padding: 4px 8px; border-radius: 8px; font-size: 10px; opacity: 0; transition: 0.2s; pointer-events: none; }
+        .tooltip { position: absolute; top: -30px; background: #0E0E0E; color: white; padding: 4px 8px; border-radius: 8px; font-size: 10px; opacity: 0; transition: 0.2s; pointer-events: none; white-space: nowrap; left: 50%; transform: translateX(-50%);}
         .tooltip::after { content: ""; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); border-width: 4px; border-style: solid; border-color: #0E0E0E transparent transparent transparent; }
         .bar:hover .tooltip { opacity: 1; top: -35px; }
 
@@ -136,42 +111,35 @@
     </style>
 </head>
 <body>
-
-    <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo" onclick="alert('Logo Clicked')">G</div>
-        <i class='bx bx-home-alt nav-icon active' onclick="switchTab(this, 'Dashboard')"></i>
+        <div class="logo">G</div>
+        <i class='bx bx-home-alt nav-icon active' onclick="switchTab(this, 'Home')"></i>
         <i class='bx bx-grid-alt nav-icon' onclick="switchTab(this, 'Categories')"></i>
         <i class='bx bx-bar-chart-alt-2 nav-icon' onclick="switchTab(this, 'Analytics')"></i>
         <i class='bx bx-user nav-icon' onclick="switchTab(this, 'Team')"></i>
         <i class='bx bx-cog nav-icon' onclick="switchTab(this, 'Settings')"></i>
         <div class="spacer"></div>
-        <div class="profile-pic" onclick="alert('Profile Settings Opened')"><i class='bx bxs-user'></i></div>
-        <i class='bx bx-log-out nav-icon' onclick="alert('Logging out...')"></i>
+        <div class="profile-pic"><i class='bx bxs-user'></i></div>
+        <i class='bx bx-log-out nav-icon'></i>
     </div>
 
-    <!-- Main Content -->
     <div class="main-wrapper">
         <div class="header">
             <div class="search-container">
                 <div class="search-bar">
                     <i class='bx bx-search'></i>
-                    <input type="text" id="queryInput" placeholder="Describe issue (e.g. Battery drains fast)..." onkeydown="handleEnter(event)"/>
-                    <!-- Direct Mobile Search Button -->
-                    <button class="mobile-search-btn" onclick="triggerSearch()">Search</button>
+                    <input type="text" id="queryInput" placeholder="Describe issue (e.g. Battery drains fast)..." />
+                    <button class="mobile-search-btn" onclick="runAppSearch()">Search</button>
                 </div>
                 <div class="suggested-queries">
                     <span>Try:</span>
-                    <div class="suggestion-chip" onclick="setQuery('My battery dies really fast')">Battery drains fast</div>
-                    <div class="suggestion-chip" onclick="setQuery('Cannot connect to Wi-Fi')">Wi-Fi drops</div>
-                    <div class="suggestion-chip" onclick="setQuery('Screen is completely frozen')">Screen frozen</div>
+                    <div class="suggestion-chip" onclick="fillAndSearch('My battery dies really fast')">Battery drains fast</div>
+                    <div class="suggestion-chip" onclick="fillAndSearch('Cannot connect to Wi-Fi')">Wi-Fi drops</div>
+                    <div class="suggestion-chip" onclick="fillAndSearch('Screen is completely frozen')">Screen frozen</div>
                 </div>
             </div>
-            
-            <button class="header-btn" onclick="clearSearch()">
-                <i class='bx bx-trash'></i> Clear
-            </button>
-            <button class="header-btn btn-black" onclick="triggerSearch()">
+            <!-- Removed the Clear / Dustbin button completely -->
+            <button class="header-btn btn-black" onclick="runAppSearch()">
                 <i class='bx bx-check-shield'></i> Generate Guide
             </button>
         </div>
@@ -179,72 +147,17 @@
         <div id="contentArea">
             <div class="section-title" id="mainTitle">Recent Queries <span class="badge-count" id="actionCount">3</span></div>
             <div class="cards-grid" id="results">
-                
-                <div class="card">
-                    <div class="card-header">
-                        <span class="tag auto">Auto</span>
-                        <i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Options:\n- Edit Action\n- Delete Action\n- View Logs')"></i>
-                    </div>
-                    <div class="card-title">Bluetooth Pairing Failed</div>
-                    <div class="card-desc">It will reset the Bluetooth module connections.</div>
-                    <div class="card-steps">
-                        <ul>
-                            <li>Navigate to Settings</li>
-                            <li>Tap Connections</li>
-                            <li>Tap Bluetooth and unpair devices</li>
-                        </ul>
-                    </div>
-                    <div class="card-footer">
-                        <button class="launch-btn" onclick="alert('Executing Deeplink: bixby://settings/bluetooth')">Launch Settings</button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <span class="tag manual">Manual</span>
-                        <i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Options:\n- Edit Action\n- Delete Action\n- View Logs')"></i>
-                    </div>
-                    <div class="card-title">Clean Charging Port</div>
-                    <div class="card-desc">It will guide the user to physically clean port.</div>
-                    <div class="card-steps">
-                        <ul>
-                            <li>Turn off the device</li>
-                            <li>Use a wooden toothpick to gently remove lint</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <span class="tag critical">Critical</span>
-                        <i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Options:\n- Edit Action\n- Delete Action\n- View Logs')"></i>
-                    </div>
-                    <div class="card-title">Factory Reset Device</div>
-                    <div class="card-desc">It will erase all user data permanently.</div>
-                    <div class="card-steps">
-                        <ul>
-                            <li>Navigate to General Management</li>
-                            <li>Tap Reset</li>
-                            <li>Tap Factory data reset</li>
-                        </ul>
-                    </div>
-                    <div class="card-footer">
-                        <button class="launch-btn" onclick="alert('WARNING: Launching Factory Reset Intent')">Launch Settings</button>
-                    </div>
-                </div>
-
+                <!-- Cards will be populated by JS -->
             </div>
         </div>
     </div>
 
-    <!-- Right Panel (Widgets) -->
     <div class="right-panel">
         <div class="widget-dark">
             <div class="widget-header">
                 <h3>Resolution Types</h3>
-                <span onclick="alert('Filtering by: All time')"><i class='bx bx-calendar'></i> All time</span>
+                <span><i class='bx bx-calendar'></i> All time</span>
             </div>
-            
             <div class="donut-wrapper">
                 <div class="donut" id="cssDonut"></div>
                 <div class="donut-center">
@@ -252,7 +165,6 @@
                     <p>Total</p>
                 </div>
             </div>
-
             <div class="legend">
                 <div><div class="dot" style="background:#DCEE77;"></div> Auto</div>
                 <div><div class="dot" style="background:#698BFF;"></div> Manual</div>
@@ -264,7 +176,7 @@
         <div class="widget-light">
             <div class="widget-header" style="margin-bottom: 5px;">
                 <h3 style="z-index: 1;">Users Assisted</h3>
-                <span style="z-index: 1;" onclick="alert('Filtering by: This week')"><i class='bx bx-calendar-week'></i> This week</span>
+                <span style="z-index: 1;"><i class='bx bx-calendar-week'></i> This week</span>
             </div>
             <div class="stat-value" id="currentTotal" style="z-index: 1;">12,450</div>
             <div class="stat-label" style="z-index: 1;">Total users helped successfully</div>
@@ -272,7 +184,7 @@
             <div class="bar-chart" id="cssBarChart">
                 <div class="bar"><div class="bar-fill" style="height: 40%"><div class="tooltip">120</div></div><span>Mon</span></div>
                 <div class="bar"><div class="bar-fill" style="height: 55%"><div class="tooltip">150</div></div><span>Tue</span></div>
-                <div class="bar"><div class="bar-fill" id="wedBar" style="height: 100%; background:#698BFF;"><div class="tooltip" style="opacity:1; top:-35px; background:black;">12 Jul<br>2,912</div></div><span>Wed</span></div>
+                <div class="bar"><div class="bar-fill" id="wedBar" style="height: 100%;"><div class="tooltip">12 Jul<br>2,912</div></div><span>Wed</span></div>
                 <div class="bar"><div class="bar-fill" style="height: 45%"><div class="tooltip">130</div></div><span>Thu</span></div>
                 <div class="bar"><div class="bar-fill" style="height: 70%"><div class="tooltip">210</div></div><span>Fri</span></div>
                 <div class="bar"><div class="bar-fill" style="height: 60%"><div class="tooltip">180</div></div><span>Sat</span></div>
@@ -282,54 +194,64 @@
     </div>
 
     <script>
-        // Set Suggested Query
-        function setQuery(text) {
-            document.getElementById("queryInput").value = text;
-            triggerSearch();
+        // Setup initial default screen state
+        function renderDefaultState() {
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = 
+                <div class="card">
+                    <div class="card-header"><span class="tag auto">Auto</span><i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Action options menu')"></i></div>
+                    <div class="card-title">Bluetooth Pairing Failed</div>
+                    <div class="card-desc">It will reset the Bluetooth module connections.</div>
+                    <div class="card-steps"><ul><li>Navigate to Settings</li><li>Tap Connections</li><li>Tap Bluetooth and unpair devices</li></ul></div>
+                    <div class="card-footer"><button class="launch-btn" onclick="alert('Executing: bixby://settings/bluetooth')">Launch Settings</button></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="tag manual">Manual</span><i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Action options menu')"></i></div>
+                    <div class="card-title">Clean Charging Port</div>
+                    <div class="card-desc">It will guide the user to physically clean port.</div>
+                    <div class="card-steps"><ul><li>Turn off the device</li><li>Use a wooden toothpick to gently remove lint</li></ul></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="tag critical">Critical</span><i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Action options menu')"></i></div>
+                    <div class="card-title">Factory Reset Device</div>
+                    <div class="card-desc">It will erase all user data permanently.</div>
+                    <div class="card-steps"><ul><li>Navigate to General Management</li><li>Tap Reset</li><li>Tap Factory data reset</li></ul></div>
+                    <div class="card-footer"><button class="launch-btn" onclick="alert('Launch Factory Reset')">Launch Settings</button></div>
+                </div>
+            ;
+            document.getElementById("mainTitle").innerHTML = Recent Queries <span class="badge-count">3</span>;
         }
+        
+        // Call it immediately
+        renderDefaultState();
 
-        function clearSearch() {
-            document.getElementById("queryInput").value = "";
-        }
-
-        // Sidebar Navigation
-        function switchTab(element, title) {
-            document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
-            element.classList.add('active');
-            
-            if(title === 'Dashboard') {
-                window.location.reload();
-            } else {
-                document.getElementById('mainTitle').innerHTML = title +  <span class="badge-count">0</span>;
-                document.getElementById('results').innerHTML = <div class="card" style="border: 2px dashed #DDD; box-shadow:none; color:#888; text-align:center;">Viewing  panel. Nothing to display.</div>;
-            }
-        }
-
-        // Search Handlers
-        function handleEnter(e) {
-            if (e.key === 'Enter' || e.keyCode === 13) {
+        // 1. & 4. SEARCH / GENERATE GUIDE LOGIC
+        // Ensure Enter key works without breaking
+        document.getElementById("queryInput").addEventListener("keypress", function(e) {
+            if (e.key === 'Enter') {
                 e.preventDefault();
-                triggerSearch();
+                runAppSearch();
             }
+        });
+
+        // 2. SUGGESTED OPTIONS LOGIC
+        function fillAndSearch(text) {
+            document.getElementById("queryInput").value = text;
+            runAppSearch();
         }
 
-        function triggerSearch() {
+        // The core search function
+        async function runAppSearch() {
             const query = document.getElementById("queryInput").value;
-            if(!query) {
-                alert("Please enter a query in the search bar first!");
+            if (!query || query.trim() === "") {
+                alert("Please enter a query in the search bar!");
                 return;
             }
             
+            // Set loading UI
             document.getElementById("mainTitle").innerHTML = Analyzing Issue... <i class='bx bx-loader-alt bx-spin'></i>;
             document.getElementById("results").innerHTML = "";
-            
-            // Artificial delay to simulate processing
-            setTimeout(() => {
-                fetchBackendData(query);
-            }, 1000);
-        }
 
-        async function fetchBackendData(query) {
             try {
                 const res = await fetch("https://guidepost-api.onrender.com/v1/troubleshoot", {
                     method: "POST",
@@ -337,48 +259,34 @@
                     body: JSON.stringify({ query: query, siis_response: "System context baseline." })
                 });
                 
-                if (!res.ok) throw new Error("API Offline");
-                
+                if (!res.ok) throw new Error("API Error");
                 const data = await res.json();
-                renderResults(data);
+                renderCards(data);
                 
             } catch (e) {
-                console.log("Using Mock/Demo Data Fallback.");
-                
-                // Smart Fallback Demo Data based on Query
-                let title = "Swipe Navigation Settings";
+                // FALLBACK MOCK DATA IF RENDER BACKEND FAILS / SLEEPS
+                let title = "Swipe Navigation Fix";
                 let cat = "auto";
                 let act = "Configure Navigation Bar";
                 let steps = ["Navigate to Settings", "Tap Display", "Tap Navigation Bar"];
-                let dl = "bixby://navigation";
                 
                 const qLower = query.toLowerCase();
                 if (qLower.includes("battery")) {
-                    title = "Battery Optimization"; act = "Optimize Battery Usage"; steps = ["Navigate to Settings", "Tap Device Care", "Tap Optimize Now"]; dl = "bixby://device_care";
+                    title = "Battery Optimization"; act = "Optimize Battery Usage"; steps = ["Navigate to Settings", "Tap Device Care", "Tap Optimize Now"];
                 } else if (qLower.includes("wifi") || qLower.includes("connect")) {
-                    title = "Reset Network Settings"; act = "Reset Wi-Fi Networks"; cat = "critical"; steps = ["Navigate to Settings", "Tap General management", "Tap Reset", "Tap Reset network settings"]; dl = "bixby://reset_network";
+                    title = "Reset Network Settings"; act = "Reset Wi-Fi Networks"; cat = "critical"; steps = ["Navigate to Settings", "Tap General management", "Tap Reset", "Tap Reset network settings"];
                 }
 
-                const demoData = {
-                    response: {
-                        contexts: [{
-                            title: title,
-                            actions: [
-                                {
-                                    category: cat,
-                                    actionName: act,
-                                    description: "It will automatically configure the required settings to resolve the problem.",
-                                    stepGroups: [{ steps: steps, actionableDeepLink: {deeplink: dl} }]
-                                }
-                            ]
-                        }]
-                    }
+                const mockData = {
+                    response: { contexts: [{ title: title, actions: [{ category: cat, actionName: act, description: "System has generated optimal steps.", stepGroups: [{ steps: steps, actionableDeepLink: {deeplink: "bixby://setting"} }] }] }] }
                 };
-                renderResults(demoData);
+                
+                // Small delay to make demo look real
+                setTimeout(() => renderCards(mockData), 600);
             }
         }
 
-        function renderResults(data) {
+        function renderCards(data) {
             const resultsDiv = document.getElementById("results");
             const titleEl = document.getElementById("mainTitle");
 
@@ -394,11 +302,10 @@
             let html = "";
             ctx.actions.forEach(action => {
                 const cat = action.category || "auto";
-                
                 html += <div class="card">
                     <div class="card-header">
                         <span class="tag "></span>
-                        <i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Options Menu:\\n- Edit Action\\n- Delete Action\\n- View Action Logs')"></i>
+                        <i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Options Menu clicked')"></i>
                     </div>
                     <div class="card-title"></div>
                     <div class="card-desc"></div>
@@ -406,33 +313,52 @@
                 
                 if (action.stepGroups && action.stepGroups.length > 0) {
                     html += <div class="card-steps"><ul>;
-                    action.stepGroups.forEach(sg => {
-                        sg.steps.forEach(step => html += <li></li>);
-                    });
+                    action.stepGroups[0].steps.forEach(step => html += <li></li>);
                     html += </ul></div>;
-                    
-                    const sg0 = action.stepGroups[0];
-                    if (sg0.actionableDeepLink && cat !== "manual") {
-                        html += <div class="card-footer">
-                            <button class="launch-btn" onclick="alert('Executing Hardware Deeplink:\\n')">Launch Settings</button>
-                        </div>;
+                    if (action.stepGroups[0].actionableDeepLink && cat !== "manual") {
+                        html += <div class="card-footer"><button class="launch-btn" onclick="alert('Launching Device Settings')">Launch Settings</button></div>;
                     }
                 }
-                
                 html += </div>;
             });
             
             resultsDiv.innerHTML = html;
             
-            // Animate Stats to show response
+            // Animate Stats to show response successfully processed
             document.getElementById("currentTotal").innerText = "12,451";
             document.getElementById("totalActions").innerText = "274";
             document.getElementById("cssDonut").style.background = "conic-gradient(#DCEE77 0% 35%, #698BFF 35% 60%, #82CDB3 60% 85%, #7A73AB 85% 100%)";
-            document.getElementById("wedBar").style.height = "100%";
-            document.getElementById("wedBar").style.background = "#FFB3B3"; // Blink to red to show activity
-            setTimeout(() => { document.getElementById("wedBar").style.background = "#698BFF"; }, 500);
+            document.getElementById("wedBar").style.background = "#FFB3B3";
+            setTimeout(() => { document.getElementById("wedBar").style.background = "#A3B8FF"; }, 500);
         }
-            // Anti-Sleep Ping: keeps Render Backend awake by hitting /health every 10 minutes
+
+        // 6. SIDEBAR NAVIGATION LOGIC
+        function switchTab(element, tabName) {
+            document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
+            element.classList.add('active');
+            
+            if(tabName === 'Home') {
+                renderDefaultState();
+            } else if (tabName === 'Categories') {
+                document.getElementById('mainTitle').innerHTML = Categories Overview <span class="badge-count">3</span>;
+                document.getElementById('results').innerHTML = 
+                    <div class="card"><div class="card-title">Auto Actions</div><div class="card-desc">Fully automated steps that users can execute with one tap. High success rate.</div></div>
+                    <div class="card"><div class="card-title">Manual Actions</div><div class="card-desc">Physical hardware steps like cleaning ports, changing SIM cards, wiping screen.</div></div>
+                    <div class="card"><div class="card-title">Critical Actions</div><div class="card-desc">Dangerous actions like Factory Resets. Always prompts for user confirmation.</div></div>
+                ;
+            } else if (tabName === 'Analytics') {
+                document.getElementById('mainTitle').innerHTML = Deep Analytics;
+                document.getElementById('results').innerHTML = <div class="card"><div class="card-title">System Telemetry</div><div class="card-desc">Currently, the semantic cache hit rate is 94.2%, bypassing LLM calls completely.</div></div>;
+            } else if (tabName === 'Team') {
+                document.getElementById('mainTitle').innerHTML = Team Members;
+                document.getElementById('results').innerHTML = <div class="card"><div class="card-title">Admin User</div><div class="card-desc">Role: Super Admin</div></div>;
+            } else if (tabName === 'Settings') {
+                document.getElementById('mainTitle').innerHTML = System Settings;
+                document.getElementById('results').innerHTML = <div class="card"><div class="card-title">API Configuration</div><div class="card-desc">Endpoint URL: https://guidepost-api.onrender.com<br>Mock Mode: Enabled</div></div>;
+            }
+        }
+
+        // Anti-Sleep Ping: keeps Render Backend awake
         setInterval(() => {
             fetch("https://guidepost-api.onrender.com/health").catch(() => {});
         }, 10 * 60 * 1000);
