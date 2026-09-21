@@ -197,7 +197,7 @@
         // Setup initial default screen state
         function renderDefaultState() {
             const resultsDiv = document.getElementById("results");
-            resultsDiv.innerHTML = 
+            resultsDiv.innerHTML = `
                 <div class="card">
                     <div class="card-header"><span class="tag auto">Auto</span><i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Action options menu')"></i></div>
                     <div class="card-title">Bluetooth Pairing Failed</div>
@@ -218,15 +218,14 @@
                     <div class="card-steps"><ul><li>Navigate to General Management</li><li>Tap Reset</li><li>Tap Factory data reset</li></ul></div>
                     <div class="card-footer"><button class="launch-btn" onclick="alert('Launch Factory Reset')">Launch Settings</button></div>
                 </div>
-            ;
-            document.getElementById("mainTitle").innerHTML = Recent Queries <span class="badge-count">3</span>;
+            `;
+            document.getElementById("mainTitle").innerHTML = `Recent Queries <span class="badge-count">3</span>`;
         }
         
         // Call it immediately
         renderDefaultState();
 
         // 1. & 4. SEARCH / GENERATE GUIDE LOGIC
-        // Ensure Enter key works without breaking
         document.getElementById("queryInput").addEventListener("keypress", function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -249,7 +248,7 @@
             }
             
             // Set loading UI
-            document.getElementById("mainTitle").innerHTML = Analyzing Issue... <i class='bx bx-loader-alt bx-spin'></i>;
+            document.getElementById("mainTitle").innerHTML = `Analyzing Issue... <i class='bx bx-loader-alt bx-spin'></i>`;
             document.getElementById("results").innerHTML = "";
 
             try {
@@ -264,7 +263,7 @@
                 renderCards(data);
                 
             } catch (e) {
-                // FALLBACK MOCK DATA IF RENDER BACKEND FAILS / SLEEPS
+                // FALLBACK MOCK DATA IF RENDER BACKEND FAILS
                 let title = "Swipe Navigation Fix";
                 let cat = "auto";
                 let act = "Configure Navigation Bar";
@@ -291,35 +290,35 @@
             const titleEl = document.getElementById("mainTitle");
 
             if (!data.response || !data.response.contexts || data.response.contexts.length === 0) {
-                titleEl.innerHTML = No Plan Found <span class="badge-count">0</span>;
-                resultsDiv.innerHTML = <div class="card">No suitable troubleshooting guide found.</div>;
+                titleEl.innerHTML = `No Plan Found <span class="badge-count">0</span>`;
+                resultsDiv.innerHTML = `<div class="card">No suitable troubleshooting guide found.</div>`;
                 return;
             }
             
             const ctx = data.response.contexts[0];
-            titleEl.innerHTML = Troubleshooting Guide <span class="badge-count"></span>;
+            titleEl.innerHTML = `Troubleshooting Guide <span class="badge-count">${ctx.actions.length}</span>`;
             
             let html = "";
             ctx.actions.forEach(action => {
                 const cat = action.category || "auto";
-                html += <div class="card">
+                html += `<div class="card">
                     <div class="card-header">
-                        <span class="tag "></span>
+                        <span class="tag ${cat}">${cat}</span>
                         <i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Options Menu clicked')"></i>
                     </div>
-                    <div class="card-title"></div>
-                    <div class="card-desc"></div>
-                ;
+                    <div class="card-title">${action.actionName}</div>
+                    <div class="card-desc">${action.description}</div>
+                `;
                 
                 if (action.stepGroups && action.stepGroups.length > 0) {
-                    html += <div class="card-steps"><ul>;
-                    action.stepGroups[0].steps.forEach(step => html += <li></li>);
-                    html += </ul></div>;
+                    html += `<div class="card-steps"><ul>`;
+                    action.stepGroups[0].steps.forEach(step => html += `<li>${step}</li>`);
+                    html += `</ul></div>`;
                     if (action.stepGroups[0].actionableDeepLink && cat !== "manual") {
-                        html += <div class="card-footer"><button class="launch-btn" onclick="alert('Launching Device Settings')">Launch Settings</button></div>;
+                        html += `<div class="card-footer"><button class="launch-btn" onclick="alert('Launching Device Settings')">Launch Settings</button></div>`;
                     }
                 }
-                html += </div>;
+                html += `</div>`;
             });
             
             resultsDiv.innerHTML = html;
@@ -340,21 +339,21 @@
             if(tabName === 'Home') {
                 renderDefaultState();
             } else if (tabName === 'Categories') {
-                document.getElementById('mainTitle').innerHTML = Categories Overview <span class="badge-count">3</span>;
-                document.getElementById('results').innerHTML = 
+                document.getElementById('mainTitle').innerHTML = `Categories Overview <span class="badge-count">3</span>`;
+                document.getElementById('results').innerHTML = `
                     <div class="card"><div class="card-title">Auto Actions</div><div class="card-desc">Fully automated steps that users can execute with one tap. High success rate.</div></div>
                     <div class="card"><div class="card-title">Manual Actions</div><div class="card-desc">Physical hardware steps like cleaning ports, changing SIM cards, wiping screen.</div></div>
                     <div class="card"><div class="card-title">Critical Actions</div><div class="card-desc">Dangerous actions like Factory Resets. Always prompts for user confirmation.</div></div>
-                ;
+                `;
             } else if (tabName === 'Analytics') {
-                document.getElementById('mainTitle').innerHTML = Deep Analytics;
-                document.getElementById('results').innerHTML = <div class="card"><div class="card-title">System Telemetry</div><div class="card-desc">Currently, the semantic cache hit rate is 94.2%, bypassing LLM calls completely.</div></div>;
+                document.getElementById('mainTitle').innerHTML = `Deep Analytics`;
+                document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">System Telemetry</div><div class="card-desc">Currently, the semantic cache hit rate is 94.2%, bypassing LLM calls completely.</div></div>`;
             } else if (tabName === 'Team') {
-                document.getElementById('mainTitle').innerHTML = Team Members;
-                document.getElementById('results').innerHTML = <div class="card"><div class="card-title">Admin User</div><div class="card-desc">Role: Super Admin</div></div>;
+                document.getElementById('mainTitle').innerHTML = `Team Members`;
+                document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">Admin User</div><div class="card-desc">Role: Super Admin</div></div>`;
             } else if (tabName === 'Settings') {
-                document.getElementById('mainTitle').innerHTML = System Settings;
-                document.getElementById('results').innerHTML = <div class="card"><div class="card-title">API Configuration</div><div class="card-desc">Endpoint URL: https://guidepost-api.onrender.com<br>Mock Mode: Enabled</div></div>;
+                document.getElementById('mainTitle').innerHTML = `System Settings`;
+                document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">API Configuration</div><div class="card-desc">Endpoint URL: https://guidepost-api.onrender.com<br>Mock Mode: Enabled</div></div>`;
             }
         }
 
