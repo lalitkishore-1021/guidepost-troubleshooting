@@ -11,6 +11,8 @@ from app.cache import init_cache, get_or_compute
 from app.pipeline import run_pipeline
 from app.llm import usage_stats
 
+from fastapi.middleware.cors import CORSMiddleware
+
 # Global trace store for the /debug/trace endpoint
 debug_traces = []
 
@@ -21,6 +23,14 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="Guidepost API", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Enforce clean JSON errors instead of HTML
 @app.exception_handler(Exception)
