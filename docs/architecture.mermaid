@@ -1,0 +1,37 @@
+flowchart TD
+    Client([Mobile App / Web UI]) --> API[FastAPI: POST /v1/troubleshoot]
+    
+    subgraph CacheLayer[Two-Tier Cache & Coalescing]
+        API --> Lock[Async Request Coalescer]
+        Lock --> Tier0{Tier 0: Exact SQLite Match?}
+        Tier0 -- Yes --> ReturnCache((Return 200 OK))
+        Tier0 -- No --> Tier1{Tier 1: FAISS Semantic Match > 0.90?}
+        Tier1 -- Yes --> ReturnCache
+    end
+    
+    subgraph LLMPipeline[LLM Processing Pipeline]
+        Tier1 -- No (Cold Query) --> Enrich[Query Enrichment & Variations]
+        Enrich --> Extract[Extract Goal, Title, Actions & Steps]
+        
+        subgraph HybridRetrieval[Hybrid Catalog Retrieval]
+            Extract --> BM25[BM25 Term Matching]
+            Extract --> SBERT[Dense Vector Embeddings]
+            BM25 --> RRF[Reciprocal Rank Fusion]
+            SBERT --> RRF
+        end
+        
+        RRF --> Map[Map Deeplink Candidates]
+        Map --> LLMChoice[LLM Candidate Selection]
+        LLMChoice --> Verify[Code Verification vs Catalog]
+    end
+    
+    subgraph Validation[Strict Rule Enforcement]
+        Verify --> ValCheck{Pydantic / Rule Check}
+        ValCheck -- Fails --> Repair[LLM Repair Loop max=2]
+        Repair --> ValCheck
+        ValCheck -- Fails 2x --> Trim[Programmatic Trim & Fallback]
+        Trim --> SaveCache
+        ValCheck -- Passes --> SaveCache[(Save to SQLite & FAISS)]
+    end
+    
+    SaveCache --> Respond((Return 200 OK JSON))
