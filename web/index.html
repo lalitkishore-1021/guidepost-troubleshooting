@@ -11,11 +11,11 @@
             --bg-color: #F1EFE7; --sidebar-bg: #0E0E0E; --card-bg: #FFFFFF;
             --text-main: #1A1A1A; --text-muted: #666666;
             --tag-auto: #DCEE77; --tag-manual: #698BFF; --tag-critical: #FFB3B3;
-            --chart-dark: #0A0A0A; --chart-light: #F2F4F7;
+            --chart-dark: #0A0A0A;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; padding: 20px; display: flex; gap: 30px; overflow: hidden; }
+        body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; padding: 20px; display: flex; gap: 20px; overflow: hidden; }
 
         /* Sidebar */
         .sidebar { background-color: var(--sidebar-bg); width: 80px; border-radius: 30px; display: flex; flex-direction: column; align-items: center; padding: 30px 0; gap: 25px; flex-shrink: 0; }
@@ -30,20 +30,19 @@
         .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 10px; }
         
         /* Header */
-        .header { display: flex; align-items: center; gap: 15px; width: 100%;}
-        
-        .search-container { flex-grow: 1; display: flex; flex-direction: column; gap: 8px;}
+        .header { display: flex; align-items: center; gap: 15px; width: 100%; flex-wrap: wrap;}
+        .search-container { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; min-width: 200px;}
         .search-bar { background: var(--card-bg); border-radius: 30px; display: flex; align-items: center; padding: 8px 12px 8px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        .search-bar i { color: #888; font-size: 20px; margin-right: 10px; }
+        .search-bar i { color: #888; font-size: 20px; margin-right: 10px; flex-shrink: 0;}
         .search-bar input { border: none; outline: none; width: 100%; font-size: 15px; background: transparent; padding: 8px 0;}
-        .mobile-search-btn { background: var(--sidebar-bg); color: white; border: none; border-radius: 20px; padding: 8px 16px; font-weight: 600; cursor: pointer; transition: 0.2s;}
+        .mobile-search-btn { background: var(--sidebar-bg); color: white; border: none; border-radius: 20px; padding: 8px 16px; font-weight: 600; cursor: pointer; transition: 0.2s; flex-shrink: 0;}
         .mobile-search-btn:hover { background: #333; }
         
-        .header-btn { background: var(--sidebar-bg); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-size: 15px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 8px; transition: 0.2s;}
+        .header-btn { background: var(--sidebar-bg); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; white-space: nowrap;}
         .header-btn:hover { background: #333; }
 
         /* Suggested Queries */
-        .suggested-queries { display: flex; gap: 10px; align-items: center; font-size: 12px; margin-left: 10px;}
+        .suggested-queries { display: flex; gap: 8px; align-items: center; font-size: 12px; margin-left: 10px; flex-wrap: wrap;}
         .suggested-queries span { color: #888; }
         .suggestion-chip { background: white; border-radius: 12px; padding: 4px 10px; cursor: pointer; border: 1px solid #DDD; transition: 0.2s;}
         .suggestion-chip:hover { border-color: #888; background: #F8F9FA;}
@@ -52,7 +51,7 @@
         .section-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .badge-count { background: var(--sidebar-bg); color: white; font-size: 12px; padding: 2px 8px; border-radius: 12px; }
 
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-bottom: 30px; }
 
         /* Card */
         .card { background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 12px; }
@@ -100,7 +99,6 @@
         .bar-fill { width: 100%; background: #A3B8FF; border-radius: 6px; transition: height 0.5s ease, background 0.2s; position: relative;}
         .bar:hover .bar-fill { background: #698BFF !important; }
         .bar span { font-size: 10px; color: #888; margin-top: 8px; }
-        
         .tooltip { position: absolute; top: -30px; background: #0E0E0E; color: white; padding: 4px 8px; border-radius: 8px; font-size: 10px; opacity: 0; transition: 0.2s; pointer-events: none; white-space: nowrap; left: 50%; transform: translateX(-50%);}
         .tooltip::after { content: ""; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); border-width: 4px; border-style: solid; border-color: #0E0E0E transparent transparent transparent; }
         .bar:hover .tooltip { opacity: 1; top: -35px; }
@@ -108,6 +106,27 @@
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #DDD; border-radius: 10px; }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .right-panel { display: none; }
+            .header-btn { padding: 10px 14px; font-size: 13px; }
+        }
+        @media (max-width: 700px) {
+            body { padding: 10px; gap: 10px; flex-direction: column; overflow-y: auto; }
+            .sidebar { width: 100%; flex-direction: row; border-radius: 20px; padding: 10px 15px; gap: 10px; overflow-x: auto; }
+            .logo { margin-bottom: 0; margin-right: 10px; }
+            .spacer { display: none; }
+            .profile-pic { margin-bottom: 0; }
+            .nav-icon { font-size: 20px; padding: 8px; }
+            .main-wrapper { padding-right: 0; overflow-y: visible; }
+            .header { flex-direction: column; align-items: stretch; gap: 10px; }
+            .header-btn { width: 100%; justify-content: center; }
+            .search-container { min-width: 0; }
+            .suggested-queries { margin-left: 0; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .right-panel { display: flex; width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -136,19 +155,17 @@
                     <div class="suggestion-chip" onclick="fillAndSearch('My battery dies really fast')">Battery drains fast</div>
                     <div class="suggestion-chip" onclick="fillAndSearch('Cannot connect to Wi-Fi')">Wi-Fi drops</div>
                     <div class="suggestion-chip" onclick="fillAndSearch('Screen is completely frozen')">Screen frozen</div>
+                    <div class="suggestion-chip" onclick="fillAndSearch('Camera is blurry')">Camera blurry</div>
                 </div>
             </div>
-            <!-- Removed the Clear / Dustbin button completely -->
-            <button class="header-btn btn-black" onclick="runAppSearch()">
+            <button class="header-btn" onclick="runAppSearch()">
                 <i class='bx bx-check-shield'></i> Generate Guide
             </button>
         </div>
 
         <div id="contentArea">
             <div class="section-title" id="mainTitle">Recent Queries <span class="badge-count" id="actionCount">3</span></div>
-            <div class="cards-grid" id="results">
-                <!-- Cards will be populated by JS -->
-            </div>
+            <div class="cards-grid" id="results"></div>
         </div>
     </div>
 
@@ -180,11 +197,10 @@
             </div>
             <div class="stat-value" id="currentTotal" style="z-index: 1;">12,450</div>
             <div class="stat-label" style="z-index: 1;">Total users helped successfully</div>
-            
-            <div class="bar-chart" id="cssBarChart">
+            <div class="bar-chart">
                 <div class="bar"><div class="bar-fill" style="height: 40%"><div class="tooltip">120</div></div><span>Mon</span></div>
                 <div class="bar"><div class="bar-fill" style="height: 55%"><div class="tooltip">150</div></div><span>Tue</span></div>
-                <div class="bar"><div class="bar-fill" id="wedBar" style="height: 100%;"><div class="tooltip">12 Jul<br>2,912</div></div><span>Wed</span></div>
+                <div class="bar"><div class="bar-fill" style="height: 100%;"><div class="tooltip">2,912</div></div><span>Wed</span></div>
                 <div class="bar"><div class="bar-fill" style="height: 45%"><div class="tooltip">130</div></div><span>Thu</span></div>
                 <div class="bar"><div class="bar-fill" style="height: 70%"><div class="tooltip">210</div></div><span>Fri</span></div>
                 <div class="bar"><div class="bar-fill" style="height: 60%"><div class="tooltip">180</div></div><span>Sat</span></div>
@@ -194,14 +210,74 @@
     </div>
 
     <script>
-        // Track recent queries
+        // ========== INSTANT MOCK DATABASE ==========
+        // No backend call needed. Results appear instantly.
+        const mockDB = {
+            battery: {
+                title: "Battery Optimization",
+                actions: [
+                    { category: "auto", actionName: "Optimize Battery Usage", description: "It will reduce background power consumption automatically.", stepGroups: [{ steps: ["Navigate to Settings", "Tap Device Care", "Tap Battery", "Tap Optimize Now"], actionableDeepLink: { deeplink: "bixby://device_care" } }] },
+                    { category: "manual", actionName: "Check Charging Cable", description: "It will guide you to inspect hardware connections.", stepGroups: [{ steps: ["Unplug charger from phone", "Inspect cable for damage", "Try a different certified cable"] }] }
+                ]
+            },
+            wifi: {
+                title: "Network Troubleshooting",
+                actions: [
+                    { category: "auto", actionName: "Toggle Airplane Mode", description: "It will refresh all wireless radios instantly.", stepGroups: [{ steps: ["Swipe down notification panel", "Tap Airplane mode ON", "Wait 10 seconds", "Tap Airplane mode OFF"], actionableDeepLink: { deeplink: "bixby://connectivity" } }] },
+                    { category: "critical", actionName: "Reset Network Settings", description: "It will clear all saved Wi-Fi passwords.", stepGroups: [{ steps: ["Navigate to Settings", "Tap General management", "Tap Reset", "Tap Reset network settings"], actionableDeepLink: { deeplink: "bixby://reset_network" } }] }
+                ]
+            },
+            camera: {
+                title: "Camera Troubleshooting",
+                actions: [
+                    { category: "auto", actionName: "Clear Camera Cache", description: "It will remove temporary camera data files.", stepGroups: [{ steps: ["Navigate to Settings", "Tap Apps", "Tap Camera", "Tap Clear Cache"], actionableDeepLink: { deeplink: "bixby://app_settings/camera" } }] },
+                    { category: "auto", actionName: "Reset Camera Settings", description: "It will restore default camera configurations.", stepGroups: [{ steps: ["Open Camera app", "Tap Settings gear icon", "Tap Reset settings", "Confirm reset"], actionableDeepLink: { deeplink: "bixby://camera_settings" } }] }
+                ]
+            },
+            frozen: {
+                title: "Frozen Screen Recovery",
+                actions: [
+                    { category: "critical", actionName: "Force Restart Device", description: "It will safely reboot the frozen device.", stepGroups: [{ steps: ["Press and hold Volume Down + Power button", "Hold for 10 seconds", "Device will vibrate and restart"], actionableDeepLink: { deeplink: "bixby://power_menu" } }] },
+                    { category: "auto", actionName: "Clear System Cache", description: "It will remove temporary system files safely.", stepGroups: [{ steps: ["Power off device", "Hold Volume Up + Power", "Select Wipe cache partition", "Reboot system now"], actionableDeepLink: { deeplink: "bixby://recovery" } }] }
+                ]
+            },
+            storage: {
+                title: "Storage Management",
+                actions: [
+                    { category: "auto", actionName: "Free Up Storage Space", description: "It will identify and remove unnecessary files.", stepGroups: [{ steps: ["Navigate to Settings", "Tap Device Care", "Tap Storage", "Tap Clean Now"], actionableDeepLink: { deeplink: "bixby://device_care/storage" } }] }
+                ]
+            },
+            display: {
+                title: "Display Settings Fix",
+                actions: [
+                    { category: "auto", actionName: "Adjust Display Settings", description: "It will recalibrate screen brightness and color.", stepGroups: [{ steps: ["Navigate to Settings", "Tap Display", "Toggle Adaptive brightness", "Adjust Screen mode"], actionableDeepLink: { deeplink: "bixby://display" } }] }
+                ]
+            },
+            default: {
+                title: "General Device Fix",
+                actions: [
+                    { category: "auto", actionName: "Run Device Diagnostics", description: "It will scan and fix common device issues.", stepGroups: [{ steps: ["Navigate to Settings", "Tap Device Care", "Tap Optimize Now", "Review recommendations"], actionableDeepLink: { deeplink: "bixby://device_care" } }] },
+                    { category: "manual", actionName: "Check for Software Update", description: "It will guide you to install latest firmware.", stepGroups: [{ steps: ["Navigate to Settings", "Tap Software update", "Tap Download and install"] }] }
+                ]
+            }
+        };
+
+        function getMatchKey(query) {
+            const q = query.toLowerCase();
+            if (q.includes("battery") || q.includes("charge") || q.includes("power") || q.includes("drain")) return "battery";
+            if (q.includes("wifi") || q.includes("wi-fi") || q.includes("internet") || q.includes("connect") || q.includes("network")) return "wifi";
+            if (q.includes("camera") || q.includes("photo") || q.includes("blurry") || q.includes("lens")) return "camera";
+            if (q.includes("frozen") || q.includes("freeze") || q.includes("stuck") || q.includes("hang") || q.includes("restart")) return "frozen";
+            if (q.includes("storage") || q.includes("space") || q.includes("memory") || q.includes("full")) return "storage";
+            if (q.includes("screen") || q.includes("display") || q.includes("bright") || q.includes("dark")) return "display";
+            return "default";
+        }
+
+        // ========== RECENT QUERIES TRACKING ==========
         const recentQueries = [];
 
-        // Setup initial default screen state
         function renderDefaultState() {
             const resultsDiv = document.getElementById("results");
-            
-            // If user has searched before, show their recent queries
             if (recentQueries.length > 0) {
                 let html = "";
                 recentQueries.forEach(rq => {
@@ -218,8 +294,6 @@
                 document.getElementById("mainTitle").innerHTML = `Recent Queries <span class="badge-count">${recentQueries.length}</span>`;
                 return;
             }
-            
-            // Default cards shown on first visit
             resultsDiv.innerHTML = `
                 <div class="card">
                     <div class="card-header"><span class="tag auto">Auto</span><i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Action options menu')"></i></div>
@@ -244,74 +318,28 @@
             `;
             document.getElementById("mainTitle").innerHTML = `Recent Queries <span class="badge-count">3</span>`;
         }
-        
-        // Call it immediately
+
         renderDefaultState();
 
-        // 1. & 4. SEARCH / GENERATE GUIDE LOGIC
+        // ========== SEARCH LOGIC ==========
         document.getElementById("queryInput").addEventListener("keypress", function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                runAppSearch();
-            }
+            if (e.key === 'Enter') { e.preventDefault(); runAppSearch(); }
         });
 
-        // 2. SUGGESTED OPTIONS LOGIC
         function fillAndSearch(text) {
             document.getElementById("queryInput").value = text;
             runAppSearch();
         }
 
-        // The core search function
-        async function runAppSearch() {
+        function runAppSearch() {
             const query = document.getElementById("queryInput").value;
-            if (!query || query.trim() === "") {
-                alert("Please enter a query in the search bar!");
-                return;
-            }
-            
-            // Set loading UI
-            document.getElementById("mainTitle").innerHTML = `Analyzing Issue... <i class='bx bx-loader-alt bx-spin'></i>`;
-            document.getElementById("results").innerHTML = "";
+            if (!query || query.trim() === "") { alert("Please enter a query in the search bar!"); return; }
 
-            try {
-                // 15-second timeout so UI never hangs if backend is sleeping
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
-                
-                const res = await fetch("https://guidepost-api.onrender.com/v1/troubleshoot", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ query: query, siis_response: "User reported issue: " + query + ". System context baseline." }),
-                    signal: controller.signal
-                });
-                clearTimeout(timeoutId);
-                
-                if (!res.ok) throw new Error("API Error");
-                const data = await res.json();
-                renderCards(data);
-                
-            } catch (e) {
-                // FALLBACK MOCK DATA IF RENDER BACKEND FAILS
-                let title = "Swipe Navigation Fix";
-                let cat = "auto";
-                let act = "Configure Navigation Bar";
-                let steps = ["Navigate to Settings", "Tap Display", "Tap Navigation Bar"];
-                
-                const qLower = query.toLowerCase();
-                if (qLower.includes("battery")) {
-                    title = "Battery Optimization"; act = "Optimize Battery Usage"; steps = ["Navigate to Settings", "Tap Device Care", "Tap Optimize Now"];
-                } else if (qLower.includes("wifi") || qLower.includes("connect")) {
-                    title = "Reset Network Settings"; act = "Reset Wi-Fi Networks"; cat = "critical"; steps = ["Navigate to Settings", "Tap General management", "Tap Reset", "Tap Reset network settings"];
-                }
-
-                const mockData = {
-                    response: { contexts: [{ title: title, actions: [{ category: cat, actionName: act, description: "System has generated optimal steps.", stepGroups: [{ steps: steps, actionableDeepLink: {deeplink: "bixby://setting"} }] }] }] }
-                };
-                
-                // Render mock data immediately
-                renderCards(mockData);
-            }
+            // INSTANT result from local mock database
+            const key = getMatchKey(query);
+            const match = mockDB[key];
+            const data = { response: { contexts: [match] } };
+            renderCards(data);
         }
 
         function renderCards(data) {
@@ -327,7 +355,7 @@
             const ctx = data.response.contexts[0];
             titleEl.innerHTML = `Troubleshooting Guide <span class="badge-count">${ctx.actions.length}</span>`;
             
-            // Save to recent queries history
+            // Save to recent queries
             ctx.actions.forEach(action => {
                 recentQueries.unshift({
                     category: action.category || "auto",
@@ -336,7 +364,6 @@
                     steps: action.stepGroups && action.stepGroups[0] ? action.stepGroups[0].steps : []
                 });
             });
-            // Keep only last 9 queries
             if (recentQueries.length > 9) recentQueries.length = 9;
 
             let html = "";
@@ -350,7 +377,6 @@
                     <div class="card-title">${action.actionName}</div>
                     <div class="card-desc">${action.description}</div>
                 `;
-                
                 if (action.stepGroups && action.stepGroups.length > 0) {
                     html += `<div class="card-steps"><ul>`;
                     action.stepGroups[0].steps.forEach(step => html += `<li>${step}</li>`);
@@ -364,15 +390,13 @@
             
             resultsDiv.innerHTML = html;
             
-            // Animate Stats to show response successfully processed
+            // Animate stats
             document.getElementById("currentTotal").innerText = "12,451";
             document.getElementById("totalActions").innerText = "274";
             document.getElementById("cssDonut").style.background = "conic-gradient(#DCEE77 0% 35%, #698BFF 35% 60%, #82CDB3 60% 85%, #7A73AB 85% 100%)";
-            document.getElementById("wedBar").style.background = "#FFB3B3";
-            setTimeout(() => { document.getElementById("wedBar").style.background = "#A3B8FF"; }, 500);
         }
 
-        // 6. SIDEBAR NAVIGATION LOGIC
+        // ========== SIDEBAR NAVIGATION ==========
         function switchTab(element, tabName) {
             document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
             element.classList.add('active');
@@ -388,20 +412,18 @@
                 `;
             } else if (tabName === 'Analytics') {
                 document.getElementById('mainTitle').innerHTML = `Deep Analytics`;
-                document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">System Telemetry</div><div class="card-desc">Currently, the semantic cache hit rate is 94.2%, bypassing LLM calls completely.</div></div>`;
+                document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">System Telemetry</div><div class="card-desc">Semantic cache hit rate: 94.2% bypassing LLM calls. Average response time: 12ms. Total queries processed: 12,450.</div></div>`;
             } else if (tabName === 'Team') {
                 document.getElementById('mainTitle').innerHTML = `Team Members`;
                 document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">Admin User</div><div class="card-desc">Role: Super Admin</div></div>`;
             } else if (tabName === 'Settings') {
                 document.getElementById('mainTitle').innerHTML = `System Settings`;
-                document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">API Configuration</div><div class="card-desc">Endpoint URL: https://guidepost-api.onrender.com<br>Mock Mode: Enabled</div></div>`;
+                document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">API Configuration</div><div class="card-desc">Endpoint: guidepost-api.onrender.com<br>Mock Mode: Enabled<br>Cache: FAISS + SQLite</div></div>`;
             }
         }
 
-        // Anti-Sleep Ping: keeps Render Backend awake
-        setInterval(() => {
-            fetch("https://guidepost-api.onrender.com/health").catch(() => {});
-        }, 10 * 60 * 1000);
+        // Anti-Sleep Ping
+        setInterval(() => { fetch("https://guidepost-api.onrender.com/health").catch(() => {}); }, 10 * 60 * 1000);
     </script>
 </body>
 </html>
