@@ -252,11 +252,17 @@
             document.getElementById("results").innerHTML = "";
 
             try {
+                // 5-second timeout so UI never hangs if backend is sleeping
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
                 const res = await fetch("https://guidepost-api.onrender.com/v1/troubleshoot", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ query: query, siis_response: "System context baseline." })
+                    body: JSON.stringify({ query: query, siis_response: "System context baseline." }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
                 
                 if (!res.ok) throw new Error("API Error");
                 const data = await res.json();
@@ -280,8 +286,8 @@
                     response: { contexts: [{ title: title, actions: [{ category: cat, actionName: act, description: "System has generated optimal steps.", stepGroups: [{ steps: steps, actionableDeepLink: {deeplink: "bixby://setting"} }] }] }] }
                 };
                 
-                // Small delay to make demo look real
-                setTimeout(() => renderCards(mockData), 600);
+                // Render mock data immediately
+                renderCards(mockData);
             }
         }
 
