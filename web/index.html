@@ -18,13 +18,11 @@
         body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; padding: 20px; display: flex; gap: 20px; overflow: hidden; }
 
         /* Sidebar */
-        .sidebar { background-color: var(--sidebar-bg); width: 80px; border-radius: 30px; display: flex; flex-direction: column; align-items: center; padding: 30px 0; gap: 25px; flex-shrink: 0; }
-        .logo { width: 32px; height: 32px; background: white; border-radius: 50%; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: black; cursor:pointer;}
-        .nav-icon { color: #888; font-size: 24px; cursor: pointer; transition: 0.2s; padding: 10px; border-radius: 12px; }
-        .nav-icon:hover, .nav-icon.active { color: #FFF; background: rgba(255,255,255,0.1); }
-        .spacer { flex-grow: 1; }
-        .profile-pic { width: 40px; height: 40px; background: #FFF; border-radius: 50%; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .profile-pic i { font-size: 24px; color: #CCC; }
+        .sidebar { background-color: var(--sidebar-bg); width: 70px; border-radius: 24px; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 8px; flex-shrink: 0; justify-content: center; }
+        .nav-icon { color: #555; font-size: 22px; cursor: pointer; transition: all 0.3s ease; padding: 14px; border-radius: 16px; position: relative; }
+        .nav-icon:hover { color: #FFF; background: rgba(255,255,255,0.08); }
+        .nav-icon.active { color: #FFF; background: rgba(255,255,255,0.12); }
+        .nav-icon.active::before { content: ""; position: absolute; left: -6px; top: 50%; transform: translateY(-50%); width: 4px; height: 20px; background: #DCEE77; border-radius: 4px; }
         
         /* Main Content */
         .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; padding-right: 10px; }
@@ -113,12 +111,16 @@
             .header-btn { padding: 10px 14px; font-size: 13px; }
         }
         @media (max-width: 700px) {
-            body { padding: 10px; gap: 10px; flex-direction: column; overflow-y: auto; }
-            .sidebar { width: 100%; flex-direction: row; border-radius: 20px; padding: 10px 15px; gap: 10px; overflow-x: auto; }
-            .logo { margin-bottom: 0; margin-right: 10px; }
-            .spacer { display: none; }
-            .profile-pic { margin-bottom: 0; }
-            .nav-icon { font-size: 20px; padding: 8px; }
+            body { padding: 10px; padding-bottom: 80px; gap: 10px; flex-direction: column; overflow-y: auto; }
+            .sidebar { 
+                position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+                width: 100%; flex-direction: row; border-radius: 0;
+                padding: 8px 0; gap: 0; justify-content: space-around;
+                background: rgba(14,14,14,0.95); backdrop-filter: blur(10px);
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            }
+            .nav-icon { font-size: 22px; padding: 10px 16px; border-radius: 12px; }
+            .nav-icon.active::before { left: 50%; top: auto; bottom: -4px; transform: translateX(-50%); width: 20px; height: 3px; }
             .main-wrapper { padding-right: 0; overflow-y: visible; }
             .header { flex-direction: column; align-items: stretch; gap: 10px; }
             .header-btn { width: 100%; justify-content: center; }
@@ -131,15 +133,11 @@
 </head>
 <body>
     <div class="sidebar">
-        <div class="logo">G</div>
         <i class='bx bx-home-alt nav-icon active' onclick="switchTab(this, 'Home')"></i>
         <i class='bx bx-grid-alt nav-icon' onclick="switchTab(this, 'Categories')"></i>
         <i class='bx bx-bar-chart-alt-2 nav-icon' onclick="switchTab(this, 'Analytics')"></i>
         <i class='bx bx-user nav-icon' onclick="switchTab(this, 'Team')"></i>
         <i class='bx bx-cog nav-icon' onclick="switchTab(this, 'Settings')"></i>
-        <div class="spacer"></div>
-        <div class="profile-pic"><i class='bx bxs-user'></i></div>
-        <i class='bx bx-log-out nav-icon'></i>
     </div>
 
     <div class="main-wrapper">
