@@ -432,6 +432,10 @@
             document.getElementById("wedBar").style.background = "#FFB3B3"; // Blink to red to show activity
             setTimeout(() => { document.getElementById("wedBar").style.background = "#698BFF"; }, 500);
         }
+            // Anti-Sleep Ping: keeps Render Backend awake by hitting /health every 10 minutes
+        setInterval(() => {
+            fetch("https://guidepost-api.onrender.com/health").catch(() => {});
+        }, 10 * 60 * 1000);
     </script>
 </body>
 </html>
