@@ -331,7 +331,7 @@
 
         async function fetchBackendData(query) {
             try {
-                const res = await fetch("http://127.0.0.1:8000/v1/troubleshoot", {
+                const res = await fetch("https://guidepost-api.onrender.com/v1/troubleshoot", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ query: query, siis_response: "System context baseline." })
