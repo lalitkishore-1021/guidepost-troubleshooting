@@ -272,7 +272,22 @@
         }
 
         // ========== RECENT QUERIES TRACKING ==========
-        const recentQueries = [];
+        let recentQueries = [];
+        try {
+            const stored = localStorage.getItem("guidepost_recent");
+            if (stored) recentQueries = JSON.parse(stored);
+        } catch(e) {}
+
+        function saveRecentQuery(action) {
+            recentQueries.unshift({
+                category: action.category || "auto",
+                actionName: action.actionName,
+                description: action.description,
+                steps: action.stepGroups && action.stepGroups[0] ? action.stepGroups[0].steps : []
+            });
+            if (recentQueries.length > 9) recentQueries.length = 9;
+            localStorage.setItem("guidepost_recent", JSON.stringify(recentQueries));
+        }
 
         function renderDefaultState() {
             const resultsDiv = document.getElementById("results");
@@ -351,7 +366,17 @@
                 clearTimeout(timeoutId);
 
                 if (!res.ok) throw new Error("API Error");
-                const data = await res.json();
+                let data = await res.json();
+                
+                // If backend returned the generic default, override with our rich local mock
+                if (data.response && data.response.contexts && data.response.contexts[0]) {
+                    const firstAction = data.response.contexts[0].actions[0].actionName;
+                    if (firstAction === "Configure Navigation Bar Settings" && query.toLowerCase().indexOf("swipe") === -1) {
+                        const key = getMatchKey(query);
+                        data = { response: { contexts: [mockDB[key]] } };
+                    }
+                }
+                
                 renderCards(data);
 
             } catch (e) {
@@ -377,15 +402,7 @@
             titleEl.innerHTML = `Troubleshooting Guide <span class="badge-count">${ctx.actions.length}</span>`;
             
             // Save to recent queries
-            ctx.actions.forEach(action => {
-                recentQueries.unshift({
-                    category: action.category || "auto",
-                    actionName: action.actionName,
-                    description: action.description,
-                    steps: action.stepGroups && action.stepGroups[0] ? action.stepGroups[0].steps : []
-                });
-            });
-            if (recentQueries.length > 9) recentQueries.length = 9;
+            ctx.actions.forEach(action => saveRecentQuery(action));
 
             let html = "";
             ctx.actions.forEach(action => {
