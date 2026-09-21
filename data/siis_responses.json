@@ -1,0 +1,18 @@
+﻿[
+  {
+    "id": "siis_1",
+    "text": "If you are experiencing issues with swipe navigation gestures scrolling incorrectly, you can configure the Navigation Bar Settings. It will let you choose navigation type. Navigate to and open Settings. Tap on Display. Tap on Navigation bar. Select your preferred navigation type between Buttons and Swipe gestures. Optionally toggle on Gesture hint to display guidance lines at the bottom of the screen."
+  },
+  {
+    "id": "siis_2",
+    "text": "To improve battery life, enable Battery Protect. It will limit maximum charge. Go to Settings. Tap Battery. Tap Protect battery."
+  },
+  {
+    "id": "siis_3",
+    "text": "If pictures are blurry, clean the lens first. If it persists, reset camera settings. Open Camera. Tap Settings. Tap Reset settings."
+  },
+  {
+    "id": "siis_4",
+    "text": "For severe performance issues like freezing, a factory reset may be required. Back up your data first. Open Settings. Tap General management. Tap Reset. Tap Factory data reset."
+  }
+]

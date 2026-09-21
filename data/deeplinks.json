@@ -1,0 +1,34 @@
+﻿[
+  {
+    "deeplink": "bixby://masked/act/display_navigation",
+    "description": "Open navigation bar settings under Display",
+    "message": "Choose navigation type in Display settings",
+    "qna_description": "Settings for configuring swipe gestures or buttons",
+    "control_types": ["toggle", "radio"],
+    "validation_rules": []
+  },
+  {
+    "deeplink": "bixby://masked/act/battery_protect",
+    "description": "Open Battery Protect settings",
+    "message": "Limit maximum charge to protect battery lifespan",
+    "qna_description": "Settings for battery life extension",
+    "control_types": ["toggle"],
+    "validation_rules": []
+  },
+  {
+    "deeplink": "bixby://masked/act/camera_reset",
+    "description": "Reset camera settings to default",
+    "message": "Reset all camera parameters",
+    "qna_description": "Troubleshoot camera issues by resetting settings",
+    "control_types": ["button"],
+    "validation_rules": []
+  },
+  {
+    "deeplink": "bixby://masked/act/factory_reset",
+    "description": "Factory data reset device",
+    "message": "Erase all data and reset device to factory state",
+    "qna_description": "Complete system reset for severe performance issues",
+    "control_types": ["button"],
+    "validation_rules": []
+  }
+]
