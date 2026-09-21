@@ -194,9 +194,32 @@
     </div>
 
     <script>
+        // Track recent queries
+        const recentQueries = [];
+
         // Setup initial default screen state
         function renderDefaultState() {
             const resultsDiv = document.getElementById("results");
+            
+            // If user has searched before, show their recent queries
+            if (recentQueries.length > 0) {
+                let html = "";
+                recentQueries.forEach(rq => {
+                    const cat = rq.category || "auto";
+                    html += `<div class="card">
+                        <div class="card-header"><span class="tag ${cat}">${cat}</span><i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Action options menu')"></i></div>
+                        <div class="card-title">${rq.actionName}</div>
+                        <div class="card-desc">${rq.description}</div>
+                        <div class="card-steps"><ul>${rq.steps.map(s => '<li>' + s + '</li>').join('')}</ul></div>
+                        ${cat !== 'manual' ? '<div class="card-footer"><button class="launch-btn" onclick="alert(\'Launching Device Settings\')">Launch Settings</button></div>' : ''}
+                    </div>`;
+                });
+                resultsDiv.innerHTML = html;
+                document.getElementById("mainTitle").innerHTML = `Recent Queries <span class="badge-count">${recentQueries.length}</span>`;
+                return;
+            }
+            
+            // Default cards shown on first visit
             resultsDiv.innerHTML = `
                 <div class="card">
                     <div class="card-header"><span class="tag auto">Auto</span><i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Action options menu')"></i></div>
@@ -252,14 +275,14 @@
             document.getElementById("results").innerHTML = "";
 
             try {
-                // 5-second timeout so UI never hangs if backend is sleeping
+                // 15-second timeout so UI never hangs if backend is sleeping
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
                 
                 const res = await fetch("https://guidepost-api.onrender.com/v1/troubleshoot", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ query: query, siis_response: "System context baseline." }),
+                    body: JSON.stringify({ query: query, siis_response: "User reported issue: " + query + ". System context baseline." }),
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
@@ -304,6 +327,18 @@
             const ctx = data.response.contexts[0];
             titleEl.innerHTML = `Troubleshooting Guide <span class="badge-count">${ctx.actions.length}</span>`;
             
+            // Save to recent queries history
+            ctx.actions.forEach(action => {
+                recentQueries.unshift({
+                    category: action.category || "auto",
+                    actionName: action.actionName,
+                    description: action.description,
+                    steps: action.stepGroups && action.stepGroups[0] ? action.stepGroups[0].steps : []
+                });
+            });
+            // Keep only last 9 queries
+            if (recentQueries.length > 9) recentQueries.length = 9;
+
             let html = "";
             ctx.actions.forEach(action => {
                 const cat = action.category || "auto";
