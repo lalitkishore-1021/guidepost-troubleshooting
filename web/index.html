@@ -159,6 +159,7 @@
 <body>
     <div class="sidebar">
         <i class='bx bx-home-alt nav-icon active' onclick="switchTab(this, 'Home')"></i>
+        <i class='bx bx-support nav-icon' onclick="switchTab(this, 'Agent Console')"></i>
         <i class='bx bx-grid-alt nav-icon' onclick="switchTab(this, 'Categories')"></i>
         <i class='bx bx-bar-chart-alt-2 nav-icon' onclick="switchTab(this, 'Analytics')"></i>
         <i class='bx bx-user nav-icon' onclick="switchTab(this, 'Team')"></i>
@@ -223,20 +224,32 @@
 
         <div class="widget-light">
             <div class="widget-header" style="margin-bottom: 5px;">
-                <h3 style="z-index: 1;">Users Assisted</h3>
-                <span style="z-index: 1;"><i class='bx bx-calendar-week'></i> This week</span>
+                <h3 style="z-index: 1;">System Eval Stats</h3>
+                <span style="z-index: 1;"><i class='bx bx-calendar-week'></i> Last Eval</span>
             </div>
-            <div class="stat-value" id="currentTotal" style="z-index: 1;">12,450</div>
-            <div class="stat-label" style="z-index: 1;">Total users helped successfully</div>
-            <div class="bar-chart">
-                <div class="bar"><div class="bar-fill" style="height: 40%"><div class="tooltip">120</div></div><span>Mon</span></div>
-                <div class="bar"><div class="bar-fill" style="height: 55%"><div class="tooltip">150</div></div><span>Tue</span></div>
-                <div class="bar"><div class="bar-fill" style="height: 100%;"><div class="tooltip">2,912</div></div><span>Wed</span></div>
-                <div class="bar"><div class="bar-fill" style="height: 45%"><div class="tooltip">130</div></div><span>Thu</span></div>
-                <div class="bar"><div class="bar-fill" style="height: 70%"><div class="tooltip">210</div></div><span>Fri</span></div>
-                <div class="bar"><div class="bar-fill" style="height: 60%"><div class="tooltip">180</div></div><span>Sat</span></div>
-                <div class="bar"><div class="bar-fill" style="height: 35%"><div class="tooltip">110</div></div><span>Sun</span></div>
+            <div class="stat-value" id="currentTotal" style="z-index: 1; font-size: 20px;">Target Met</div>
+            <div class="stat-label" style="z-index: 1;">Measured on Node-01 (Prod)</div>
+            
+            <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px; position:relative; z-index:1;">
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <span style="color:#666;">Cache Hit Rate</span>
+                    <span style="font-weight:600;">84.2%</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <span style="color:#666;">P95 Latency</span>
+                    <span style="font-weight:600;">1,240 ms</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <span style="color:#666;">Avg Cost/Query</span>
+                    <span style="font-weight:600;">$0.0012</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <span style="color:#666;">Schema-Valid %</span>
+                    <span style="font-weight:600; color:green;">100%</span>
+                </div>
             </div>
+            
+            <button class="launch-btn" style="width:100%; margin-top:20px; position:relative; z-index:1; border-color:#DDD;" onclick="alert('Running Trust Suite adversarial tests...')">Run Trust Suite Tests</button>
         </div>
     </div>
 
@@ -311,8 +324,9 @@
             if (stored) recentQueries = JSON.parse(stored);
         } catch(e) {}
 
-        function saveRecentQuery(action) {
+        function saveRecentQuery(query, action) {
             recentQueries.unshift({
+                query: query,
                 category: action.category || "auto",
                 actionName: action.actionName,
                 description: action.description,
@@ -328,16 +342,16 @@
                 let html = "";
                 recentQueries.forEach(rq => {
                     const cat = rq.category || "auto";
-                    html += `<div class="card">
-                        <div class="card-header"><span class="tag ${cat}">${cat}</span><i class='bx bx-dots-horizontal-rounded' style="color:#CCC; cursor:pointer;" onclick="alert('Action options menu')"></i></div>
+                    const qSafe = rq.query ? rq.query.replace(/'/g, "\\'") : "Device issue";
+                    html += `<div class="card" style="cursor:pointer; border: 1px solid transparent;" onmouseover="this.style.borderColor='#CCC'" onmouseout="this.style.borderColor='transparent'" onclick="fillAndSearch('${qSafe}')">
+                        <div class="card-header"><span class="tag ${cat}">${cat}</span><span style="font-size:11px; color:#888;">"${qSafe}"</span></div>
                         <div class="card-title">${rq.actionName}</div>
                         <div class="card-desc">${rq.description}</div>
-                        <div class="card-steps"><ul>${rq.steps.map(s => '<li>' + s + '</li>').join('')}</ul></div>
-                        ${cat !== 'manual' ? '<div class="card-footer"><button class="launch-btn" onclick="alert(\'Launching Device Settings\')">Launch Settings</button></div>' : ''}
+                        <div class="card-footer"><button class="launch-btn" onclick="event.stopPropagation(); alert('Launching Device Settings')">Re-run Search</button></div>
                     </div>`;
                 });
                 resultsDiv.innerHTML = html;
-                document.getElementById("mainTitle").innerHTML = `Recent Queries <span class="badge-count">${recentQueries.length}</span>`;
+                document.getElementById("mainTitle").innerHTML = `Recent Queries <span class="badge-count">${recentQueries.length}</span> <button class="launch-btn" style="margin-left:auto;" onclick="localStorage.removeItem('guidepost_recent'); location.reload();">Clear History</button>`;
                 return;
             }
             resultsDiv.innerHTML = `
@@ -469,6 +483,7 @@
             let topHtml = `<div class="view-tabs">
                 <button id="guideTabBtn" class="view-tab active" onclick="switchContentTab('guide')">Guide View</button>
                 <button id="jsonTabBtn" class="view-tab" onclick="switchContentTab('json')">Raw JSON</button>
+                <button class="view-tab" style="margin-left:auto; border-style:dashed;" onclick="navigator.clipboard.writeText(document.getElementById('results').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy Plan', 2000);">Copy Plan</button>
             </div>`;
             
             if (data.meta) {
@@ -481,8 +496,9 @@
             }
             
             if (data.query_variations && data.query_variations.length > 0) {
+                const var0 = data.query_variations[0].replace(/'/g, "\\'");
                 topHtml += `<details class="query-variations">
-                    <summary>See paraphrased queries (${data.query_variations.length})</summary>
+                    <summary>See paraphrased queries (${data.query_variations.length}) <button class="launch-btn" style="float:right; margin-top:-6px;" onclick="event.stopPropagation(); fillAndSearch('${var0}')">Ask in different words ⚡</button></summary>
                     <ul>${data.query_variations.map(v => `<li>${v}</li>`).join('')}</ul>
                 </details>`;
             }
@@ -490,7 +506,8 @@
             topUI.innerHTML = topHtml;
             
             // Save to recent queries
-            ctx.actions.forEach(action => saveRecentQuery(action));
+            const query = document.getElementById("queryInput").value;
+            ctx.actions.forEach(action => saveRecentQuery(query, action));
 
             let html = "";
             ctx.actions.forEach(action => {
@@ -507,9 +524,15 @@
                     html += `<div class="card-steps"><ul>`;
                     action.stepGroups[0].steps.forEach(step => html += `<li>${step}</li>`);
                     html += `</ul></div>`;
-                    if (action.stepGroups[0].actionableDeepLink && cat !== "manual") {
-                        html += `<div class="card-footer"><button class="launch-btn" onclick="alert('Launching Device Settings')">Launch Settings</button></div>`;
-                    }
+                    
+                    html += `<div class="card-footer" style="justify-content: space-between; align-items: center;">
+                        <div style="display:flex; gap:10px; color:#888;">
+                            <span style="font-size:12px; font-weight:500;">Did this help?</span>
+                            <i class='bx bx-like' style="cursor:pointer;" onclick="this.style.color='#DCEE77'"></i>
+                            <i class='bx bx-dislike' style="cursor:pointer;" onclick="this.style.color='#FFB3B3'"></i>
+                        </div>
+                        ${(action.stepGroups[0].actionableDeepLink && cat !== "manual") ? `<button class="launch-btn" onclick="alert('Launching Device Settings')">Launch Settings</button>` : ''}
+                    </div>`;
                 }
                 html += `</div>`;
             });
@@ -528,8 +551,36 @@
             element.classList.add('active');
             
             if(tabName === 'Home') {
+                document.getElementById('topUI').style.display = 'block';
                 renderDefaultState();
+            } else if (tabName === 'Agent Console') {
+                document.getElementById('topUI').style.display = 'none';
+                document.getElementById('mainTitle').innerHTML = `Support Agent Console <span class="badge-count">Live Queue</span>`;
+                document.getElementById('results').innerHTML = `
+                    <div style="display:flex; gap:20px; width:100%;">
+                        <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+                            <div class="card" style="border-left: 4px solid #DCEE77;">
+                                <div style="font-size:12px; color:#888;">Ticket #8921 • User: John D.</div>
+                                <div class="card-title" style="margin-top:5px;">"My battery is dying so fast since update"</div>
+                            </div>
+                            <div class="card" style="opacity:0.6;">
+                                <div style="font-size:12px; color:#888;">Ticket #8922 • User: Sarah W.</div>
+                                <div class="card-title" style="margin-top:5px;">"Can't connect to home wifi"</div>
+                            </div>
+                        </div>
+                        <div style="flex:2;" class="card">
+                            <div class="card-header"><span class="tag auto">AI Suggested Reply</span></div>
+                            <div class="card-title" style="margin-top:10px;">Battery Optimization Plan</div>
+                            <div class="card-steps" style="margin-top:15px;"><ul><li>Navigate to Settings</li><li>Tap Device Care</li><li>Tap Battery</li><li>Tap Optimize Now</li></ul></div>
+                            <div style="margin-top:20px; display:flex; gap:10px;">
+                                <button class="launch-btn" style="background:#111; color:white;">Send to Customer</button>
+                                <button class="launch-btn">Edit Plan</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
             } else if (tabName === 'Categories') {
+                document.getElementById('topUI').style.display = 'none';
                 document.getElementById('mainTitle').innerHTML = `Categories Overview <span class="badge-count">3</span>`;
                 document.getElementById('results').innerHTML = `
                     <div class="card"><div class="card-title">Auto Actions</div><div class="card-desc">Fully automated steps that users can execute with one tap. High success rate.</div></div>
@@ -537,12 +588,15 @@
                     <div class="card"><div class="card-title">Critical Actions</div><div class="card-desc">Dangerous actions like Factory Resets. Always prompts for user confirmation.</div></div>
                 `;
             } else if (tabName === 'Analytics') {
+                document.getElementById('topUI').style.display = 'none';
                 document.getElementById('mainTitle').innerHTML = `Deep Analytics`;
                 document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">System Telemetry</div><div class="card-desc">Semantic cache hit rate: 94.2% bypassing LLM calls. Average response time: 12ms. Total queries processed: 12,450.</div></div>`;
             } else if (tabName === 'Team') {
+                document.getElementById('topUI').style.display = 'none';
                 document.getElementById('mainTitle').innerHTML = `Team Members`;
                 document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">Admin User</div><div class="card-desc">Role: Super Admin</div></div>`;
             } else if (tabName === 'Settings') {
+                document.getElementById('topUI').style.display = 'none';
                 document.getElementById('mainTitle').innerHTML = `System Settings`;
                 document.getElementById('results').innerHTML = `<div class="card"><div class="card-title">API Configuration</div><div class="card-desc">Endpoint: guidepost-api.onrender.com<br>Mock Mode: Enabled<br>Cache: FAISS + SQLite</div></div>`;
             }
