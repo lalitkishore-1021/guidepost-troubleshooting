@@ -18,7 +18,8 @@
         body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; padding: 20px; display: flex; gap: 20px; overflow: hidden; }
 
         /* Sidebar */
-        .sidebar { background-color: var(--sidebar-bg); width: 70px; border-radius: 24px; display: flex; flex-direction: column; align-items: center; padding: 20px 0; gap: 8px; flex-shrink: 0; justify-content: center; }
+        .sidebar { background-color: var(--sidebar-bg); width: 70px; border-radius: 24px; display: flex; flex-direction: column; align-items: center; padding: 30px 0; gap: 8px; flex-shrink: 0; justify-content: flex-start; }
+        .logo { color: #DCEE77; font-weight: 800; font-size: 28px; margin-bottom: 30px; }
         .nav-icon { color: #555; font-size: 22px; cursor: pointer; transition: all 0.3s ease; padding: 14px; border-radius: 16px; position: relative; }
         .nav-icon:hover { color: #FFF; background: rgba(255,255,255,0.08); }
         .nav-icon.active { color: #FFF; background: rgba(255,255,255,0.12); }
@@ -158,6 +159,7 @@
 </head>
 <body>
     <div class="sidebar">
+        <div class="logo">G</div>
         <i class='bx bx-home-alt nav-icon active' onclick="switchTab(this, 'Home')"></i>
         <i class='bx bx-support nav-icon' onclick="switchTab(this, 'Agent Console')"></i>
         <i class='bx bx-grid-alt nav-icon' onclick="switchTab(this, 'Categories')"></i>
@@ -324,16 +326,30 @@
             if (stored) recentQueries = JSON.parse(stored);
         } catch(e) {}
 
-        function saveRecentQuery(query, action) {
-            recentQueries.unshift({
+        async function saveRecentQuery(query, action) {
+            const entry = {
                 query: query,
                 category: action.category || "auto",
                 actionName: action.actionName,
                 description: action.description,
                 steps: action.stepGroups && action.stepGroups[0] ? action.stepGroups[0].steps : []
-            });
+            };
+            
+            // Save locally immediately for fast UI
+            recentQueries.unshift(entry);
             if (recentQueries.length > 9) recentQueries.length = 9;
             localStorage.setItem("guidepost_recent", JSON.stringify(recentQueries));
+            
+            // Sync globally to backend
+            try {
+                await fetch("https://guidepost-api.onrender.com/v1/history", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(entry)
+                });
+            } catch (e) {
+                console.error("Global history sync failed (backend sleeping?)");
+            }
         }
 
         function renderDefaultState() {
@@ -380,6 +396,28 @@
         }
 
         renderDefaultState();
+
+        async function loadGlobalHistory() {
+            try {
+                const res = await fetch("https://guidepost-api.onrender.com/v1/history");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.history && data.history.length > 0) {
+                        recentQueries = data.history;
+                        localStorage.setItem("guidepost_recent", JSON.stringify(recentQueries));
+                        // If we are currently on the Home tab, re-render
+                        const activeTab = document.querySelector('.nav-icon.active');
+                        if (activeTab && activeTab.classList.contains('bx-home-alt')) {
+                            renderDefaultState();
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load global history");
+            }
+        }
+        
+        loadGlobalHistory();
 
         // ========== SEARCH LOGIC ==========
         document.getElementById("queryInput").addEventListener("keypress", function(e) {
@@ -556,25 +594,91 @@
             } else if (tabName === 'Agent Console') {
                 document.getElementById('topUI').style.display = 'none';
                 document.getElementById('mainTitle').innerHTML = `Support Agent Console <span class="badge-count">Live Queue</span>`;
-                document.getElementById('results').innerHTML = `
-                    <div style="display:flex; gap:20px; width:100%;">
-                        <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
-                            <div class="card" style="border-left: 4px solid #DCEE77;">
-                                <div style="font-size:12px; color:#888;">Ticket #8921 • User: John D.</div>
-                                <div class="card-title" style="margin-top:5px;">"My battery is dying so fast since update"</div>
+                
+                // Add a script for ticket selection
+                window.selectTicket = function(el, ticketId) {
+                    document.querySelectorAll('.ticket-card').forEach(c => {
+                        c.style.opacity = '0.6';
+                        c.style.borderLeft = 'none';
+                    });
+                    el.style.opacity = '1';
+                    el.style.borderLeft = '4px solid #DCEE77';
+                    
+                    const preview = document.getElementById('ai-preview');
+                    if (ticketId === 8922) {
+                        preview.innerHTML = `
+                            <div class="card-header"><span class="tag auto" style="display:flex; align-items:center; gap:5px;"><i class='bx bx-bot'></i> AI Suggested Reply</span></div>
+                            <div class="card-title" style="margin-top:15px; font-size:18px;">Network Reset Plan</div>
+                            <div class="card-desc" style="margin-top:8px;">Automatically generated response based on the FAISS knowledge base.</div>
+                            <div class="card-steps" style="margin-top:20px; font-size:14px; padding:15px 20px;">
+                                <ul style="line-height:1.8;">
+                                    <li>Navigate to Settings</li>
+                                    <li>Tap General Management</li>
+                                    <li>Tap Reset network settings</li>
+                                </ul>
                             </div>
-                            <div class="card" style="opacity:0.6;">
-                                <div style="font-size:12px; color:#888;">Ticket #8922 • User: Sarah W.</div>
-                                <div class="card-title" style="margin-top:5px;">"Can't connect to home wifi"</div>
+                            <div style="margin-top:25px; display:flex; gap:12px;">
+                                <button class="header-btn" style="background:#111; color:white; font-size:14px; border-radius:8px;" onclick="alert('Reply sent to Sarah W.!')"><i class='bx bx-send'></i> Send to Customer</button>
+                                <button class="launch-btn" style="padding:10px 16px; font-size:14px;" onclick="alert('Opening editor...')"><i class='bx bx-edit-alt'></i> Edit Plan</button>
+                            </div>
+                        `;
+                    } else {
+                        preview.innerHTML = `
+                            <div class="card-header"><span class="tag auto" style="display:flex; align-items:center; gap:5px;"><i class='bx bx-bot'></i> AI Suggested Reply</span></div>
+                            <div class="card-title" style="margin-top:15px; font-size:18px;">Battery Optimization Plan</div>
+                            <div class="card-desc" style="margin-top:8px;">Automatically generated response based on the FAISS knowledge base.</div>
+                            <div class="card-steps" style="margin-top:20px; font-size:14px; padding:15px 20px;">
+                                <ul style="line-height:1.8;">
+                                    <li>Navigate to Settings</li>
+                                    <li>Tap Device Care</li>
+                                    <li>Tap Battery</li>
+                                    <li>Tap Optimize Now</li>
+                                </ul>
+                            </div>
+                            <div style="margin-top:25px; display:flex; gap:12px;">
+                                <button class="header-btn" style="background:#111; color:white; font-size:14px; border-radius:8px;" onclick="alert('Reply sent to John D.!')"><i class='bx bx-send'></i> Send to Customer</button>
+                                <button class="launch-btn" style="padding:10px 16px; font-size:14px;" onclick="alert('Opening editor...')"><i class='bx bx-edit-alt'></i> Edit Plan</button>
+                            </div>
+                        `;
+                    }
+                };
+
+                document.getElementById('results').innerHTML = `
+                    <div style="display:flex; gap:30px; width:100%; align-items: flex-start;">
+                        <div style="flex:1; display:flex; flex-direction:column; gap:12px; max-width: 350px;">
+                            <h4 style="font-size: 14px; color: #888; margin-bottom: 5px;">Active Queue (2)</h4>
+                            <div class="card ticket-card" style="border-left: 4px solid #DCEE77; cursor:pointer; padding: 15px;" onclick="selectTicket(this, 8921)">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                    <span style="font-size:12px; font-weight:600; color:#555;">#8921</span>
+                                    <span style="font-size:11px; background:#FFE2E2; color:#D32F2F; padding:2px 6px; border-radius:10px;">High Priority</span>
+                                </div>
+                                <div style="font-size:12px; color:#888; margin-bottom:4px;"><i class='bx bx-user'></i> John D.</div>
+                                <div class="card-title" style="font-size: 14px; line-height:1.4;">"My battery is dying so fast since update"</div>
+                            </div>
+                            <div class="card ticket-card" style="opacity:0.6; cursor:pointer; padding: 15px;" onclick="selectTicket(this, 8922)">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                    <span style="font-size:12px; font-weight:600; color:#555;">#8922</span>
+                                    <span style="font-size:11px; background:#E2F0FF; color:#1565C0; padding:2px 6px; border-radius:10px;">Normal</span>
+                                </div>
+                                <div style="font-size:12px; color:#888; margin-bottom:4px;"><i class='bx bx-user'></i> Sarah W.</div>
+                                <div class="card-title" style="font-size: 14px; line-height:1.4;">"Can't connect to home wifi"</div>
                             </div>
                         </div>
-                        <div style="flex:2;" class="card">
-                            <div class="card-header"><span class="tag auto">AI Suggested Reply</span></div>
-                            <div class="card-title" style="margin-top:10px;">Battery Optimization Plan</div>
-                            <div class="card-steps" style="margin-top:15px;"><ul><li>Navigate to Settings</li><li>Tap Device Care</li><li>Tap Battery</li><li>Tap Optimize Now</li></ul></div>
-                            <div style="margin-top:20px; display:flex; gap:10px;">
-                                <button class="launch-btn" style="background:#111; color:white;">Send to Customer</button>
-                                <button class="launch-btn">Edit Plan</button>
+                        <div style="flex:2;" class="card" id="ai-preview">
+                            <div class="card-header"><span class="tag auto" style="display:flex; align-items:center; gap:5px;"><i class='bx bx-bot'></i> AI Suggested Reply</span></div>
+                            <div class="card-title" style="margin-top:15px; font-size:18px;">Battery Optimization Plan</div>
+                            <div class="card-desc" style="margin-top:8px;">Automatically generated response based on the FAISS knowledge base.</div>
+                            <div class="card-steps" style="margin-top:20px; font-size:14px; padding:15px 20px;">
+                                <ul style="line-height:1.8;">
+                                    <li>Navigate to Settings</li>
+                                    <li>Tap Device Care</li>
+                                    <li>Tap Battery</li>
+                                    <li>Tap Optimize Now</li>
+                                </ul>
+                            </div>
+                            <div style="margin-top:25px; display:flex; gap:12px;">
+                                <button class="header-btn" style="background:#111; color:white; font-size:14px; border-radius:8px;" onclick="alert('Reply sent to John D.!')"><i class='bx bx-send'></i> Send to Customer</button>
+                                <button class="launch-btn" style="padding:10px 16px; font-size:14px;" onclick="alert('Opening editor...')"><i class='bx bx-edit-alt'></i> Edit Plan</button>
                             </div>
                         </div>
                     </div>

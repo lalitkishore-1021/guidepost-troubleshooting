@@ -67,6 +67,20 @@ async def post_debug_trace(req: TroubleshootRequest):
     plan["_debug_execution_time_ms"] = int((time.time() - start) * 1000)
     return plan
 
+global_history = []
+
+@app.get("/v1/history")
+def get_history():
+    return {"history": global_history[:10]}
+
+@app.post("/v1/history")
+async def add_history(req: Request):
+    data = await req.json()
+    global_history.insert(0, data)
+    if len(global_history) > 10:
+        global_history.pop()
+    return {"status": "ok"}
+
 @app.post("/v1/troubleshoot")
 async def troubleshoot(req: TroubleshootRequest):
     start = time.time()
