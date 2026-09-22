@@ -22,39 +22,68 @@ def reset_stats():
 
 def call_llm(system_prompt: str, user_prompt: str, json_mode: bool = True) -> str:
     if MOCK_LLM:
+        u = user_prompt.lower()
         # Mock logic matching tests
         if "variations" in system_prompt.lower() or "enrich" in system_prompt.lower():
-            return json.dumps({"query_variations": ["Ever since I installed a new app, swiping on my phone scrolls up and down instead of going left or right."]})
+            return json.dumps({"query_variations": [user_prompt + " (paraphrased)"]})
         
         elif "extract" in system_prompt.lower():
-            return json.dumps({
-                "goal": "Follow these steps to perform this Swipe Navigation Troubleshooting",
-                "title": "Swipe navigation settings",
-                "score": 0.93,
-                "actions": [
-                    {
+            if "battery" in u:
+                return json.dumps({
+                    "goal": "Follow these steps to perform this Battery Troubleshooting",
+                    "title": "Battery optimization",
+                    "score": 0.95,
+                    "actions": [{
+                        "actionName": "Optimize Battery Usage",
+                        "description": "It will reduce background power consumption.",
+                        "category": "auto",
+                        "stepGroups": [{"steps": ["Navigate to Settings.", "Tap Battery.", "Select Optimize."]}]
+                    }]
+                })
+            elif "camera" in u or "blurry" in u:
+                return json.dumps({
+                    "goal": "Follow these steps to perform this Camera Troubleshooting",
+                    "title": "Camera settings reset",
+                    "score": 0.90,
+                    "actions": [{
+                        "actionName": "Reset Camera Settings",
+                        "description": "It will restore default camera configurations.",
+                        "category": "auto",
+                        "stepGroups": [{"steps": ["Open Camera.", "Tap Settings.", "Tap Reset settings."]}]
+                    }]
+                })
+            elif "wifi" in u or "internet" in u:
+                return json.dumps({
+                    "goal": "Follow these steps to perform this Network Troubleshooting",
+                    "title": "Reset network settings",
+                    "score": 0.98,
+                    "actions": [{
+                        "actionName": "Reset Wi-Fi Networks",
+                        "description": "It will clear saved network connections.",
+                        "category": "critical",
+                        "stepGroups": [{"steps": ["Navigate to Settings.", "Tap General management.", "Tap Reset.", "Tap Reset network settings."]}]
+                    }]
+                })
+            else:
+                return json.dumps({
+                    "goal": "Follow these steps to perform this Swipe Navigation Troubleshooting",
+                    "title": "Swipe navigation settings",
+                    "score": 0.93,
+                    "actions": [{
                         "actionName": "Configure Navigation Bar Settings",
                         "description": "It will let you choose navigation type",
                         "category": "auto",
-                        "stepGroups": [
-                            {
-                                "steps": [
-                                    "Navigate to and open Settings.",
-                                    "Tap on Display.",
-                                    "Tap on Navigation bar.",
-                                    "Select your preferred navigation type between Buttons and Swipe gestures."
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            })
+                        "stepGroups": [{"steps": ["Navigate to Settings.", "Tap Display.", "Tap Navigation bar."]}]
+                    }]
+                })
             
         elif "deeplink" in system_prompt.lower():
+            if "battery" in u: return json.dumps({"selected_deeplink": "bixby://masked/act/device_care"})
+            if "camera" in u or "blurry" in u: return json.dumps({"selected_deeplink": "bixby://masked/act/camera_settings"})
+            if "wifi" in u or "internet" in u: return json.dumps({"selected_deeplink": "bixby://masked/act/reset_network"})
             return json.dumps({"selected_deeplink": "bixby://masked/act/display_navigation"})
             
         elif "repair" in system_prompt.lower():
-            # In mock mode, if we reach repair, we just return the input since mock shouldn't fail
             return user_prompt
             
         return "{}"
