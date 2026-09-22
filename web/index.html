@@ -97,6 +97,7 @@
         .tag.manual { background: var(--tag-manual); color: white; }
         .tag.critical { background: var(--tag-critical); }
 
+        .badge-count { background:#111; color:white; padding:4px 10px; border-radius:12px; font-size:12px; margin-left:12px; vertical-align: middle; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #DDD; border-radius: 10px; }
@@ -109,24 +110,28 @@
             <i class='bx bxs-home' ></i>
             <span>Home</span>
         </div>
-        <div class="nav-item" onclick="switchTab(this, 'Library')">
-            <i class='bx bx-collection' ></i>
-            <span>Library</span>
+        <div class="nav-item" onclick="switchTab(this, 'Agent Console')">
+            <i class='bx bx-support' ></i>
+            <span>Support</span>
+        </div>
+        <div class="nav-item" onclick="switchTab(this, 'Categories')">
+            <i class='bx bx-grid-alt' ></i>
+            <span>Categories</span>
         </div>
         <div class="nav-item" onclick="switchTab(this, 'Analytics')">
             <i class='bx bx-bar-chart-alt-2' ></i>
             <span>Analytics</span>
         </div>
-        <div class="nav-item" onclick="switchTab(this, 'Agent Console')">
+        <div class="nav-item" onclick="switchTab(this, 'Team')">
             <i class='bx bx-user' ></i>
-            <span>Users</span>
+            <span>Team</span>
         </div>
         <div class="nav-item" onclick="switchTab(this, 'Settings')">
             <i class='bx bx-cog' ></i>
             <span>Settings</span>
         </div>
     </div>
-
+    
     <div class="main-wrapper">
         <div class="header">
             <div class="search-container">
@@ -267,21 +272,21 @@
                         <div style="font-size:10px; color:#888;">Create new guide</div>
                     </div>
                 </button>
-                <button class="quick-action-btn" onclick="switchTab(document.querySelector('.sidebar .nav-item:nth-child(3)'), 'Library')">
+                <button class="quick-action-btn" onclick="switchTab(document.querySelector('.sidebar .nav-item:nth-child(4)'), 'Categories')">
                     <div style="background:#E8F5E9; color:#2E7D32; padding:8px; border-radius:8px;"><i class='bx bx-book-open'></i></div>
                     <div>
                         <div style="font-weight:600; font-size:12px;">Browse Library</div>
                         <div style="font-size:10px; color:#888;">Knowledge base</div>
                     </div>
                 </button>
-                <button class="quick-action-btn" onclick="switchTab(document.querySelector('.sidebar .nav-item:nth-child(4)'), 'Analytics')">
+                <button class="quick-action-btn" onclick="switchTab(document.querySelector('.sidebar .nav-item:nth-child(5)'), 'Analytics')">
                     <div style="background:#F3E5F5; color:#7B1FA2; padding:8px; border-radius:8px;"><i class='bx bx-bar-chart-alt-2'></i></div>
                     <div>
                         <div style="font-weight:600; font-size:12px;">View Analytics</div>
                         <div style="font-size:10px; color:#888;">Check usage</div>
                     </div>
                 </button>
-                <button class="quick-action-btn" onclick="switchTab(document.querySelector('.sidebar .nav-item:nth-child(6)'), 'Settings')">
+                <button class="quick-action-btn" onclick="switchTab(document.querySelector('.sidebar .nav-item:nth-child(7)'), 'Settings')">
                     <div style="background:#F5F5F5; color:#555; padding:8px; border-radius:8px;"><i class='bx bx-cog'></i></div>
                     <div>
                         <div style="font-weight:600; font-size:12px;">Manage Settings</div>
@@ -460,7 +465,7 @@
                         recentQueries = data.history;
                         localStorage.setItem("guidepost_recent", JSON.stringify(recentQueries));
                         // If we are currently on the Home tab, re-render
-                        const activeTab = document.querySelector('.nav-icon.active');
+                        const activeTab = document.querySelector('.nav-item.active');
                         if (activeTab && activeTab.classList.contains('bx-home-alt')) {
                             renderDefaultState();
                         }
@@ -670,7 +675,7 @@
 
         // ========== SIDEBAR NAVIGATION ==========
         function switchTab(element, tabName) {
-            document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(icon => icon.classList.remove('active'));
             element.classList.add('active');
             
             if(tabName === 'Home') {
@@ -729,8 +734,8 @@
                 };
 
                 document.getElementById('results').innerHTML = `
-                    <div style="display:flex; gap:30px; width:100%; align-items: flex-start;">
-                        <div style="flex:1; display:flex; flex-direction:column; gap:12px; max-width: 350px;">
+                    <div style="display:flex; gap:30px; width:100%; align-items: stretch;">
+                        <div style="flex:1; display:flex; flex-direction:column; gap:12px; min-width: 250px; max-width: 320px;">
                             <h4 style="font-size: 14px; color: #888; margin-bottom: 5px;">Active Queue (2)</h4>
                             <div class="card ticket-card" style="border-left: 4px solid #DCEE77; cursor:pointer; padding: 15px;" onclick="selectTicket(this, 8921)">
                                 <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
@@ -749,21 +754,21 @@
                                 <div class="card-title" style="font-size: 14px; line-height:1.4;">"Can't connect to home wifi"</div>
                             </div>
                         </div>
-                        <div style="flex:2;" class="card" id="ai-preview">
-                            <div class="card-header"><span class="tag auto" style="display:flex; align-items:center; gap:5px;"><i class='bx bx-bot'></i> AI Suggested Reply</span></div>
-                            <div class="card-title" style="margin-top:15px; font-size:18px;">Battery Optimization Plan</div>
-                            <div class="card-desc" style="margin-top:8px;">Automatically generated response based on the FAISS knowledge base.</div>
-                            <div class="card-steps" style="margin-top:20px; font-size:14px; padding:15px 20px;">
-                                <ul style="line-height:1.8;">
+                        <div style="flex:2; min-width: 400px; padding: 30px;" class="card" id="ai-preview">
+                            <div class="card-header"><span class="tag auto" style="display:flex; align-items:center; gap:5px; width: fit-content;"><i class='bx bx-bot'></i> AI Suggested Reply</span></div>
+                            <div class="card-title" style="margin-top:20px; font-size:22px;">Battery Optimization Plan</div>
+                            <div class="card-desc" style="margin-top:10px; font-size: 15px;">Automatically generated response based on the FAISS knowledge base.</div>
+                            <div class="card-steps" style="margin-top:25px; font-size:15px; padding:20px 25px; background: #F8F9FA; border-radius: 12px;">
+                                <ul style="line-height:2;">
                                     <li>Navigate to Settings</li>
                                     <li>Tap Device Care</li>
                                     <li>Tap Battery</li>
                                     <li>Tap Optimize Now</li>
                                 </ul>
                             </div>
-                            <div style="margin-top:25px; display:flex; gap:12px;">
-                                <button class="header-btn" style="background:#111; color:white; font-size:14px; border-radius:8px;" onclick="alert('Reply sent to John D.!')"><i class='bx bx-send'></i> Send to Customer</button>
-                                <button class="launch-btn" style="padding:10px 16px; font-size:14px;" onclick="alert('Opening editor...')"><i class='bx bx-edit-alt'></i> Edit Plan</button>
+                            <div style="margin-top:30px; display:flex; gap:15px;">
+                                <button class="header-btn" style="background:#111; color:white; font-size:15px; padding: 12px 24px; border-radius:8px;" onclick="alert('Reply sent to John D.!')"><i class='bx bx-send'></i> Send to Customer</button>
+                                <button class="launch-btn" style="padding:12px 24px; font-size:15px;" onclick="alert('Opening editor...')"><i class='bx bx-edit-alt'></i> Edit Plan</button>
                             </div>
                         </div>
                     </div>
