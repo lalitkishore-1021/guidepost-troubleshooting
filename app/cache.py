@@ -159,7 +159,7 @@ async def get_or_compute(query: str, compute_func, *args):
         
     # Leader computes
     try:
-        plan = compute_func(query, *args)
+        plan = await asyncio.to_thread(compute_func, query, *args)
         if plan and "response" in plan and len(plan["response"].get("contexts", [])) > 0:
             save_to_cache(query, plan.get("query_variations", []), plan)
             plan["meta"]["cache_hit"] = False

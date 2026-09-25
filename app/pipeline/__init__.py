@@ -1,3 +1,4 @@
+import concurrent.futures
 from .enrich import enrich_query
 from .extract import extract_plan
 from .map_deeplinks import map_deeplinks
@@ -16,8 +17,13 @@ def run_pipeline(query: str, siis_response: str = None):
             "meta": usage_stats.copy()
         }
 
-    variations = enrich_query(query)
-    plan = extract_plan(siis_response)
+    # Run enrich and extract concurrently
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        future_enrich = executor.submit(enrich_query, query)
+        future_extract = executor.submit(extract_plan, siis_response)
+        
+        variations = future_enrich.result()
+        plan = future_extract.result()
     
     if not plan:
         return {
