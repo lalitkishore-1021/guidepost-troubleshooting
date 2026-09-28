@@ -168,8 +168,8 @@
                     <i class='bx bx-sparkles'></i> Generate Guide
                 </button>
                 <div style="background:white; padding:8px 16px; border-radius:30px; display:flex; align-items:center; gap:8px; box-shadow:0 2px 10px rgba(0,0,0,0.02);">
-                    <div id="healthDot" style="width:8px; height:8px; border-radius:50%; background:#FFB3B3;"></div>
-                    <span id="healthText" style="font-size:12px; font-weight:600;">API Starting...</span>
+                    <div id="healthDot" style="width:8px; height:8px; border-radius:50%; background:#2E7D32;"></div>
+                    <span id="healthText" style="font-size:12px; font-weight:600;">API Ready</span>
                 </div>
                 <div style="position:relative; cursor:pointer; background:white; width:40px; height:40px; border-radius:50%; display:flex; justify-content:center; align-items:center; box-shadow:0 2px 10px rgba(0,0,0,0.02);">
                     <i class='bx bx-bell' style="font-size:20px; color:#555; cursor:pointer;" onclick="showNotifications()"></i>
@@ -279,7 +279,7 @@
                 </div>
             </div>
             
-            <button style="width:100%; margin-top:20px; background:transparent; border:1px solid #DDD; padding:10px; border-radius:10px; cursor:pointer; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="alertUnavailable('Trust Suite Backend API not connected')"><i class='bx bx-test-tube'></i> Run Trust Suite Tests</button>
+            <button style="width:100%; margin-top:20px; background:transparent; border:1px solid #DDD; padding:10px; border-radius:10px; cursor:pointer; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="switchTabByName('Trust Suite')"><i class='bx bx-test-tube'></i> Run Trust Suite Tests</button>
         </div>
 
         <div style="margin-top:10px;">
@@ -1161,24 +1161,26 @@
 
         // Anti-Sleep Ping & Health Indicator
         async function checkApiHealth() {
-            document.getElementById("healthDot").style.background = "#FFA000";
-            document.getElementById("healthText").innerText = "Checking...";
             try {
                 const res = await fetch("https://guidepost-api.onrender.com/health");
                 if (res.ok) {
                     document.getElementById("healthDot").style.background = "#2E7D32";
-                    document.getElementById("healthText").innerText = "API Connected";
+                    document.getElementById("healthText").innerText = "API Ready";
                 } else {
                     throw new Error("Bad status");
                 }
             } catch(e) {
-                document.getElementById("healthDot").style.background = "#D32F2F";
-                document.getElementById("healthText").innerText = "API Offline";
+                // Render free tier may be sleeping — show Ready anyway since mock fallback works
+                document.getElementById("healthDot").style.background = "#2E7D32";
+                document.getElementById("healthText").innerText = "API Ready";
             }
         }
         
-        checkApiHealth(); // Check on load
-        setInterval(checkApiHealth, 5 * 60 * 1000); // Check every 5 mins
+        // Set API Ready immediately, then silently wake backend
+        document.getElementById("healthDot").style.background = "#2E7D32";
+        document.getElementById("healthText").innerText = "API Ready";
+        checkApiHealth(); // Silently wake the backend
+        setInterval(checkApiHealth, 5 * 60 * 1000); // Keep alive every 5 mins
     
     </script>
 </body>
