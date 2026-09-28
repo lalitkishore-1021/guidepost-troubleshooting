@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import asyncio
 from fastapi import FastAPI, Request
@@ -89,6 +90,22 @@ def get_eval_results():
             return json.load(f)
     except Exception as e:
         return {"error": "Evaluation data not available. Please run run_eval.py first."}
+
+@app.post("/v1/run-eval")
+async def run_evaluation():
+    try:
+        import subprocess
+        # Run the evaluation script
+        process = subprocess.Popen([sys.executable, "eval/run_eval.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        if process.returncode != 0:
+            return JSONResponse(status_code=500, content={"error": "Eval script failed", "details": stderr.decode()})
+            
+        import json
+        with open("eval/results/latest.json", "r") as f:
+            return json.load(f)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/v1/troubleshoot")
 async def troubleshoot(req: TroubleshootRequest):
