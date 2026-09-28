@@ -30,8 +30,8 @@ Evaluated against reference ground truth scenarios across Battery, Display, Came
 ## 3. Latency Benchmarks (N >= 30 requests per path)
 | Execution Path | Target (P95) | P50 (ms) | P95 (ms) |
 | :--- | :--- | :--- | :--- |
-| Cache hit - exact query match | <= 300 ms | 0.05 | 0.14 |
-| Cache hit - unseen semantic paraphrase | <= 300 ms | 27.09 | 27.09 |
+| Cache hit - exact query match | <= 300 ms | 0.05 | 0.25 |
+| Cache hit - unseen semantic paraphrase | <= 300 ms | 66.64 | 114.48 |
 | Cold query - full pipeline extraction & mapping | <= 8000 ms | 0.00 | 0.00 |
 
 ---
@@ -39,8 +39,8 @@ Evaluated against reference ground truth scenarios across Battery, Display, Came
 ## 4. Operational Cost & Cache Efficacy
 | Metric Item | Target | Measured Value |
 | :--- | :--- | :--- |
-| Cold query average inference cost | Tracked | $0.0004 |
-| Cache hit inference cost | $0.00 | $0.00 |
+| Cold query average inference cost | Tracked |  |
+| Cache hit inference cost | .00 | .00 |
 | Semantic cache hit rate (on unseen paraphrases) | >= 80% | 100.0% |
 | Cost derivation method | - | (prompt tokens + completion tokens) x rate |
 

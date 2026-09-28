@@ -1,0 +1,51 @@
+{
+  "evaluation_timestamp": "2026-09-28T17:30:08.379558+00:00",
+  "dataset": "data/queries.json & HELD_OUT_PARAPHRASES",
+  "total_cases": 10,
+  "step_accuracy": {
+    "value": null,
+    "unit": "percent",
+    "status": "not_measured",
+    "correct": 0,
+    "total": 5,
+    "formula": "NOT MEASURED - insufficient reference data"
+  },
+  "deeplink_validity": {
+    "value": 100.0,
+    "unit": "percent",
+    "status": "PASS",
+    "valid": 5,
+    "total": 5,
+    "formula": "valid_deeplinks / total_auto_actions * 100"
+  },
+  "cache_hit_rate": {
+    "value": 40.0,
+    "unit": "percent",
+    "status": "BELOW TARGET",
+    "hits": 2,
+    "misses": 3,
+    "total": 5,
+    "formula": "paraphrase_hits / total_paraphrase_tests * 100"
+  },
+  "cached_p95_latency": {
+    "value": 61.32639498682685,
+    "unit": "ms",
+    "status": "PASS",
+    "samples": 12
+  },
+  "average_cost_per_query": {
+    "value": 0.0,
+    "unit": "USD",
+    "status": "PASS",
+    "total_cost": 0.0,
+    "total_queries": 5
+  },
+  "schema_validity": {
+    "value": 100.0,
+    "unit": "percent",
+    "status": "PASS",
+    "valid": 5,
+    "invalid": 0,
+    "total": 5
+  }
+}

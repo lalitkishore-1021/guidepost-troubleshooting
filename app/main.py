@@ -81,6 +81,15 @@ async def add_history(req: Request):
         global_history.pop()
     return {"status": "ok"}
 
+@app.get("/v1/eval-results")
+def get_eval_results():
+    try:
+        import json
+        with open("eval/results/latest.json", "r") as f:
+            return json.load(f)
+    except Exception as e:
+        return {"error": "Evaluation data not available. Please run run_eval.py first."}
+
 @app.post("/v1/troubleshoot")
 async def troubleshoot(req: TroubleshootRequest):
     start = time.time()
