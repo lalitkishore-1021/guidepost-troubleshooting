@@ -859,8 +859,8 @@
             const data = await fetchEvalData();
             
             if(!data || data.error) {
-                document.getElementById('evalStatus').innerText = 'Data Unavailable';
-                document.getElementById('results').innerHTML = `<div class="card" style="padding:40px; text-align:center;"><i class='bx bx-shield-quarter' style="font-size:48px; color:#64748B; margin-bottom:15px;"></i><h3 style="margin-bottom:10px;">Evaluation Data Unavailable</h3><p style="color:#666; font-size:14px;">The backend evaluation JSON could not be loaded.</p></div>`;
+                if(document.getElementById('evalStatus')) document.getElementById('evalStatus').innerText = 'Data Unavailable';
+                if(document.getElementById('results')) document.getElementById('results').innerHTML = `<div class="card" style="padding:40px; text-align:center;"><i class='bx bx-shield-quarter' style="font-size:48px; color:#64748B; margin-bottom:15px;"></i><h3 style="margin-bottom:10px;">Evaluation Data Unavailable</h3><p style="color:#666; font-size:14px;">The backend evaluation JSON could not be loaded.</p></div>`;
                 return;
             }
 
@@ -983,7 +983,7 @@
                 </div>
             </div>
             `;
-            document.getElementById('evalStatus').innerText = '';
+            if(document.getElementById('evalStatus')) document.getElementById('evalStatus').innerText = '';
             document.getElementById('results').innerHTML = html;
         }
     
@@ -1308,8 +1308,8 @@
                 renderTrustSuite();
             } else if (tabName === 'Eval Lab') {
                 renderEvalLab();
-            } else if (tabName === 'Analytics') {
-                renderAnalyticsDashboard();
+            } else if (tabName === 'Analytics' || tabName === 'Eval Lab') {
+                renderEvalLab();
             } else if (tabName === 'Team') {
                 document.getElementById('topUI').style.display = 'none'; document.getElementById('heroSection').style.display = 'none';
                 document.getElementById('mainTitle').innerHTML = `Support Teams <span class="badge-count">4 Departments</span>`;
@@ -1402,29 +1402,29 @@
                 return obj.value;
             };
 
-            document.getElementById('sbCacheHit').innerText = fVal(data.cache_hit_rate);
-            document.getElementById('sbLatency').innerText = fVal(data.cached_p95_latency);
-            document.getElementById('sbCost').innerText = fVal(data.average_cost_per_query);
-            document.getElementById('sbSchema').innerText = fVal(data.schema_validity);
+            if(document.getElementById('sbCacheHit')) document.getElementById('sbCacheHit').innerText = fVal(data.cache_hit_rate);
+            if(document.getElementById('sbLatency')) document.getElementById('sbLatency').innerText = fVal(data.cached_p95_latency);
+            if(document.getElementById('sbCost')) document.getElementById('sbCost').innerText = fVal(data.average_cost_per_query);
+            if(document.getElementById('sbSchema')) document.getElementById('sbSchema').innerText = fVal(data.schema_validity);
             
             // Dynamic Target logic
             const cache = data.cache_hit_rate;
             const p95 = data.cached_p95_latency;
             let statusEl = document.getElementById('targetStatusText');
-            let iconEl = statusEl.parentElement.previousElementSibling;
+            let iconEl = statusEl ? statusEl.parentElement.previousElementSibling : null;
             
             if (!cache || cache.status === 'not_measured' || !p95 || p95.status === 'not_measured') {
-                statusEl.innerText = "Not Measured";
-                iconEl.style.color = "#888";
-                iconEl.style.background = "#F5F5F5";
+                if(statusEl) statusEl.innerText = "Not Measured";
+                if(iconEl) iconEl.style.color = "#888";
+                if(iconEl) iconEl.style.background = "#F5F5F5";
             } else if (cache.status === 'PASS' && p95.status === 'PASS') {
-                statusEl.innerText = "Target Met";
-                iconEl.style.color = "#2E7D32";
-                iconEl.style.background = "#E8F5E9";
+                if(statusEl) statusEl.innerText = "Target Met";
+                if(iconEl) iconEl.style.color = "#2E7D32";
+                if(iconEl) iconEl.style.background = "#E8F5E9";
             } else {
-                statusEl.innerText = "Target Not Met";
-                iconEl.style.color = "#D32F2F";
-                iconEl.style.background = "#FFF5F5";
+                if(statusEl) statusEl.innerText = "Target Not Met";
+                if(iconEl) iconEl.style.color = "#D32F2F";
+                if(iconEl) iconEl.style.background = "#FFF5F5";
             }
         }
         
