@@ -54,7 +54,12 @@ class TroubleshootRequest(BaseModel):
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    import os
+    if not os.getenv("LLM_API_KEY"):
+        return {"status": "LLM Not Configured"}
+    if not os.path.exists("eval/run_eval.py"):
+        return {"status": "Evaluation Service Unavailable"}
+    return {"status": "API Ready"}
 
 @app.get("/debug/trace")
 def get_debug_trace():

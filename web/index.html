@@ -64,7 +64,7 @@
 
         /* Donut */
         .donut-wrapper { position: relative; width: 150px; height: 150px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
-        .donut { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(#DCEE77 0% 32%, #698BFF 32% 60%, #82CDB3 60% 82%, #7A73AB 82% 100%); }
+        .donut { width: 100%; height: 100%; border-radius: 50%; background: #F5F5F5; }
         .donut-center { position: absolute; width: 90px; height: 90px; background: white; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .donut-center h2 { color: #111; font-size: 24px; margin: 0; font-weight: 700; }
         .donut-center p { color: #888; font-size: 11px; margin: 0; }
@@ -1465,21 +1465,26 @@
             try {
                 const res = await fetch("https://guidepost-api.onrender.com/health");
                 if (res.ok) {
-                    document.getElementById("healthDot").style.background = "#2E7D32";
-                    document.getElementById("healthText").innerText = "API Ready";
+                    const data = await res.json();
+                    if (data.status === "API Ready") {
+                        document.getElementById("healthDot").style.background = "#2E7D32";
+                        document.getElementById("healthText").innerText = "API Ready";
+                    } else {
+                        document.getElementById("healthDot").style.background = "#F57C00";
+                        document.getElementById("healthText").innerText = data.status;
+                    }
                 } else {
                     throw new Error("Bad status");
                 }
             } catch(e) {
-                // Render free tier may be sleeping — show Ready anyway since mock fallback works
-                document.getElementById("healthDot").style.background = "#2E7D32";
-                document.getElementById("healthText").innerText = "API Ready";
+                document.getElementById("healthDot").style.background = "#D32F2F";
+                document.getElementById("healthText").innerText = "API Unavailable";
             }
         }
         
-        // Set API Ready immediately, then silently wake backend
-        document.getElementById("healthDot").style.background = "#2E7D32";
-        document.getElementById("healthText").innerText = "API Ready";
+        // Initial check without hardcoding fake status
+        document.getElementById("healthDot").style.background = "#888";
+        document.getElementById("healthText").innerText = "Checking API...";
         checkApiHealth();
         updateSidebarMetrics();
         setInterval(checkApiHealth, 5 * 60 * 1000); // Keep alive every 5 mins
