@@ -1076,24 +1076,11 @@
             if (!data.response || !data.response.contexts || data.response.contexts.length === 0) {
                 titleEl.innerHTML = `No Plan Found <span class="badge-count">0</span>`;
                 resultsDiv.innerHTML = `
-                <div class="card" style="background:white; border-radius:20px; padding:20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <span class="tag auto" style="text-transform:capitalize; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; background:#E8F5E9; color:#2E7D32;"><i class='bx bx-bolt-circle'></i> Auto</span>
-                        <div style="display:flex; align-items:center; gap:10px; color:#888;">
-                            <span style="font-size:11px;">2 mins ago</span>
-                            <i class='bx bx-dots-vertical-rounded' style="cursor:pointer;"></i>
-                        </div>
-                    </div>
-                    <div style="display:flex; gap:15px; margin-bottom:20px;">
-                        <div style="width:40px; height:40px; border-radius:50%; background:#E8F5E9; color:#2E7D32; display:flex; justify-content:center; align-items:center; font-size:20px; flex-shrink:0;"><i class='bx bx-camera'></i></div>
-                        <div>
-                            <div style="font-size:15px; font-weight:700; margin-bottom:4px;">Reset Camera Settings</div>
-                            <div style="font-size:13px; color:#666; line-height:1.4;">It will restore default camera configurations.</div>
-                        </div>
-                    </div>
-                    <div style="display:flex; justify-content:flex-end;">
-                        <button style="background:transparent; border:none; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px;" onclick="fillAndSearch('camera')">Re-run Search <i class='bx bx-right-arrow-alt'></i></button>
-                    </div>
+                <div class="card" style="background:white; border-radius:20px; padding:40px; text-align:center; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                    <i class='bx bx-x-circle' style="font-size:48px; color:#D32F2F; margin-bottom:15px;"></i>
+                    <h3 style="margin-bottom:10px; font-weight:700;">No verified troubleshooting plan found.</h3>
+                    <p style="color:#666; font-size:14px; margin-bottom:20px;">No unsupported troubleshooting steps were generated.</p>
+                    <span style="background:#FFEBEE; color:#D32F2F; padding:6px 16px; border-radius:20px; font-weight:700; font-size:12px;">Status: NO MATCH</span>
                 </div>
             `;
                 return;
@@ -1159,13 +1146,25 @@
                     action.stepGroups[0].steps.forEach(step => html += `<li>${step}</li>`);
                     html += `</ul></div>`;
                     
+                    const actionableLink = action.stepGroups[0].actionableDeepLink;
+                    
+                    if (cat === 'auto') {
+                        html += `<div style="margin-bottom: 20px; font-size:12px; background:#FFF; border:1px solid #EEE; padding:12px; border-radius:12px;">
+                            <div style="font-weight:600; margin-bottom:8px; color:#111;">Catalog Validation</div>
+                            ${(actionableLink && actionableLink.deeplink && actionableLink.deeplink !== 'None') 
+                                ? `<div style="color:#2E7D32; display:flex; align-items:center; gap:6px;"><i class='bx bx-check-circle'></i> Verified catalog match: <span style="font-family:monospace; background:#E8F5E9; padding:2px 6px; border-radius:4px;">${actionableLink.deeplink}</span></div>` 
+                                : `<div style="color:#D32F2F; display:flex; align-items:center; gap:6px;"><i class='bx bx-x-circle'></i> No valid catalog match. Fallback to manual.</div>`
+                            }
+                        </div>`;
+                    }
+                    
                     html += `<div style="display:flex; justify-content: space-between; align-items: center; border-top: 1px solid #EEE; padding-top: 15px;">
                         <div style="display:flex; gap:10px; color:#888;">
                             <span style="font-size:12px; font-weight:500;">Did this help?</span>
                             <i class='bx bx-like' style="cursor:pointer; transition:0.2s;" onclick="this.style.color='#2E7D32'; this.style.transform='scale(1.2)'"></i>
                             <i class='bx bx-dislike' style="cursor:pointer; transition:0.2s;" onclick="this.style.color='#D32F2F'; this.style.transform='scale(1.2)'"></i>
                         </div>
-                        ${(actionableLink && actionableLink.deeplink && actionableLink.deeplink !== 'None') ? `<button class="launch-btn" style="background:#1E1F22; color:white; border:none; padding:8px 16px; border-radius:15px;" onclick="alertUnavailable('Launching validated deeplink: ${actionableLink.deeplink}')">Launch Settings</button>` : `<button class="launch-btn" style="background:#E2E8F0; color:#64748B; border:none; padding:8px 16px; border-radius:15px; cursor:not-allowed;" disabled>No Launch Available</button>`}
+                        ${(actionableLink && actionableLink.deeplink && actionableLink.deeplink !== 'None') ? `<button class="launch-btn" style="background:#1E1F22; color:white; border:none; padding:8px 16px; border-radius:15px;" onclick="navigator.clipboard.writeText('${actionableLink.deeplink}'); this.innerText='Copied!'; setTimeout(()=>this.innerText='Launch Settings', 2000);">Launch Settings</button>` : `<button class="launch-btn" style="background:#E2E8F0; color:#64748B; border:none; padding:8px 16px; border-radius:15px; cursor:not-allowed;" disabled>No Launch Available</button>`}
                     </div>`;
                 }
                 html += `</div>`;
