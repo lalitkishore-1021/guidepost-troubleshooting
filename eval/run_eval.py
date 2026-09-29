@@ -238,6 +238,31 @@ Evaluated against reference ground truth scenarios across Battery, Display, Came
         "invalid": len(results) - schema_valid,
         "total": len(results)
     }
+
+    # 7. Rule Compliance
+    rule_compliance = {
+        "value": rule_compliant_pct,
+        "unit": "percent",
+        "status": "PASS" if rule_compliant_pct >= 95 else "BELOW TARGET",
+        "valid": rule_compliant,
+        "total": len(results)
+    }
+
+    # 8. URL Leaks
+    url_leak_stat = {
+        "value": url_leaks,
+        "unit": "count",
+        "status": "PASS" if url_leaks == 0 else "BELOW TARGET",
+        "leaks": url_leaks
+    }
+
+    # 9. Cold P95 Latency
+    cold_p95_stat = {
+        "value": cold_p95,
+        "unit": "ms",
+        "status": "PASS" if cold_p95 <= 8000 else "BELOW TARGET",
+        "samples": len(cold_latencies)
+    }
     
     eval_json = {
         "evaluation_timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -245,8 +270,11 @@ Evaluated against reference ground truth scenarios across Battery, Display, Came
         "total_cases": len(results) + len(HELD_OUT_PARAPHRASES),
         "step_accuracy": step_accuracy,
         "deeplink_validity": deeplink_validity,
+        "rule_compliance": rule_compliance,
+        "url_leaks": url_leak_stat,
         "cache_hit_rate": cache_hit_rate,
         "cached_p95_latency": cached_p95_latency,
+        "cold_p95_latency": cold_p95_stat,
         "average_cost_per_query": average_cost_per_query,
         "schema_validity": schema_validity
     }
