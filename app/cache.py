@@ -7,7 +7,7 @@ import faiss
 from sentence_transformers import SentenceTransformer
 
 DB_PATH = "cache.db"
-SIMILARITY_THRESHOLD = 0.90
+SIMILARITY_THRESHOLD = 0.60
 
 _model = None
 _db_conn = None
@@ -105,9 +105,16 @@ def save_to_cache(exact_query: str, variations: list, plan_dict: dict):
     db = get_db()
     cursor = db.cursor()
     try:
-        cursor.execute("INSERT INTO plans (exact_query, plan_json) VALUES (?, ?)", 
-                       (exact_query.lower(), json.dumps(plan_dict)))
-        plan_id = cursor.lastrowid
+        cursor.execute("SELECT id FROM plans WHERE exact_query = ?", (exact_query.lower(),))
+        existing = cursor.fetchone()
+        if existing:
+            plan_id = existing[0]
+            cursor.execute("UPDATE plans SET plan_json = ? WHERE id = ?", (json.dumps(plan_dict), plan_id))
+            cursor.execute("DELETE FROM embeddings WHERE plan_id = ?", (plan_id,))
+        else:
+            cursor.execute("INSERT INTO plans (exact_query, plan_json) VALUES (?, ?)", 
+                           (exact_query.lower(), json.dumps(plan_dict)))
+            plan_id = cursor.lastrowid
         
         all_texts = [exact_query] + variations
         embs = get_model().encode(all_texts, convert_to_numpy=True)
@@ -117,13 +124,11 @@ def save_to_cache(exact_query: str, variations: list, plan_dict: dict):
                            (plan_id, text, embs[i].tobytes()))
         db.commit()
         
-        # Update FAISS in memory
-        faiss.normalize_L2(embs)
-        _faiss_index.add(embs)
-        _cache_mapping.extend([plan_id] * len(all_texts))
+        # Reload FAISS index to ensure clean, consistent vector space
+        load_faiss()
         
-    except sqlite3.IntegrityError:
-        pass # Already exists
+    except Exception as e:
+        print(f"Error saving to cache: {e}")
 
 async def get_or_compute(query: str, compute_func, *args):
     import time

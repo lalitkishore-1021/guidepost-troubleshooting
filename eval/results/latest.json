@@ -1,5 +1,5 @@
 {
-  "evaluation_timestamp": "2026-09-29T05:25:51.601886+00:00",
+  "evaluation_timestamp": "2026-09-29T06:21:13.225413+00:00",
   "dataset": "data/queries.json & HELD_OUT_PARAPHRASES",
   "total_cases": 10,
   "step_accuracy": {
@@ -32,25 +32,25 @@
     "leaks": 0
   },
   "cache_hit_rate": {
-    "value": 40.0,
+    "value": 100.0,
     "unit": "percent",
-    "status": "BELOW TARGET",
-    "hits": 2,
-    "misses": 3,
+    "status": "PASS",
+    "hits": 5,
+    "misses": 0,
     "total": 5,
     "formula": "paraphrase_hits / total_paraphrase_tests * 100"
   },
   "cached_p95_latency": {
-    "value": 88.1134249968454,
+    "value": 15.872735001903491,
     "unit": "ms",
     "status": "PASS",
-    "samples": 12
+    "samples": 10
   },
   "cold_p95_latency": {
-    "value": 0.0,
+    "value": 4254.544959991471,
     "unit": "ms",
     "status": "PASS",
-    "samples": 0
+    "samples": 5
   },
   "average_cost_per_query": {
     "value": 0.0,

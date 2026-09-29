@@ -30,9 +30,9 @@ Evaluated against reference ground truth scenarios across Battery, Display, Came
 ## 3. Latency Benchmarks (N >= 30 requests per path)
 | Execution Path | Target (P95) | P50 (ms) | P95 (ms) |
 | :--- | :--- | :--- | :--- |
-| Cache hit - exact query match | <= 300 ms | 0.07 | 0.17 |
-| Cache hit - unseen semantic paraphrase | <= 300 ms | 90.63 | 113.32 |
-| Cold query - full pipeline extraction & mapping | <= 8000 ms | 0.00 | 0.00 |
+| Cache hit - exact query match | <= 300 ms | 0.07 | 0.13 |
+| Cache hit - unseen semantic paraphrase | <= 300 ms | 14.22 | 16.34 |
+| Cold query - full pipeline extraction & mapping | <= 8000 ms | 18.39 | 4254.54 |
 
 ---
 

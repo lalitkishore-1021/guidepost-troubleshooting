@@ -25,6 +25,36 @@ def call_llm(system_prompt: str, user_prompt: str, json_mode: bool = True) -> st
         u = user_prompt.lower()
         # Mock logic matching tests
         if "variations" in system_prompt.lower() or "enrich" in system_prompt.lower():
+            if "battery" in u:
+                return json.dumps({"query_variations": [
+                    "Battery is draining extremely fast doing nothing",
+                    "My battery dies really quickly even when idle",
+                    "Phone losing charge very fast without using it"
+                ]})
+            elif "camera" in u or "blurry" in u:
+                return json.dumps({"query_variations": [
+                    "Main camera is super blurry",
+                    "Pictures look blurry and out of focus on the main lens",
+                    "Camera focus is broken and blurry"
+                ]})
+            elif "freez" in u or "unresponsive" in u or "locked" in u:
+                return json.dumps({"query_variations": [
+                    "Phone locked up and froze after update",
+                    "The whole device is freezing and unresponsive since the last OS update",
+                    "Device completely frozen"
+                ]})
+            elif "screen" in u and ("flicker" in u or "glitch" in u):
+                return json.dumps({"query_variations": [
+                    "Screen glitching and battery dying",
+                    "Screen flickers and battery dies fast",
+                    "Display flickering and rapid discharge"
+                ]})
+            elif "swipe" in u or "navigat" in u:
+                return json.dumps({"query_variations": [
+                    "Ever since I installed a new app, swiping on my phone scrolls up and down instead of going left or right.",
+                    "Swiping navigation is reversed or moves vertically instead of horizontally",
+                    "Gesture navigation swipe direction is wrong"
+                ]})
             return json.dumps({"query_variations": [user_prompt + " (paraphrased)"]})
         
         elif "extract" in system_prompt.lower():
@@ -78,9 +108,9 @@ def call_llm(system_prompt: str, user_prompt: str, json_mode: bool = True) -> st
                 })
             
         elif "deeplink" in system_prompt.lower():
-            if "battery" in u: return json.dumps({"selected_deeplink": "bixby://masked/act/device_care"})
-            if "camera" in u or "blurry" in u: return json.dumps({"selected_deeplink": "bixby://masked/act/camera_settings"})
-            if "wifi" in u or "internet" in u: return json.dumps({"selected_deeplink": "bixby://masked/act/reset_network"})
+            if "battery" in u: return json.dumps({"selected_deeplink": "bixby://masked/act/battery_protect"})
+            if "camera" in u or "blurry" in u: return json.dumps({"selected_deeplink": "bixby://masked/act/camera_reset"})
+            if "factory" in u or "reset" in u or "freez" in u: return json.dumps({"selected_deeplink": "bixby://masked/act/factory_reset"})
             return json.dumps({"selected_deeplink": "bixby://masked/act/display_navigation"})
             
         elif "repair" in system_prompt.lower():

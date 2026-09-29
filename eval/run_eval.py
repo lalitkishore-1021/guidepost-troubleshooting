@@ -7,7 +7,7 @@ import numpy as np
 from pathlib import Path
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from app.cache import get_or_compute, check_cache, init_cache
+from app.cache import get_or_compute, check_cache, init_cache, save_to_cache
 from app.pipeline import run_pipeline
 
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -42,20 +42,21 @@ async def main():
     total_auto_actions = 0
     total_cost = 0.0
     
-    print("Running Cold Queries...")
+    from app.validate import validate_response, check_no_urls
+
+    print("Running Real Cold Pipeline Benchmarks (no cache)...")
     for idx, q_obj in enumerate(queries):
         q = q_obj["query"]
         siis = list(siis_dict.values())[idx % len(siis_dict)]
         
+        # Cold pipeline run directly
         start = time.perf_counter()
-        res = await get_or_compute(q, run_pipeline, siis)
+        res = run_pipeline(q, siis)
         elapsed = (time.perf_counter() - start) * 1000
+        cold_latencies.append(elapsed)
         
-        if not res.get("meta", {}).get("cache_hit"):
-            cold_latencies.append(elapsed)
-        else:
-            exact_cache_latencies.append(elapsed)
-            
+        # Save to cache with proper variations
+        save_to_cache(q, res.get("query_variations", []), res)
         total_cost += res.get("meta", {}).get("cost_usd", 0.0)
         results.append(res)
         
@@ -78,16 +79,29 @@ async def main():
             paraphrase_hits += 1
             paraphrase_latencies.append(elapsed)
             
-    # Validate results
+    # Real validation and rule compliance checks
     for r in results:
-        schema_valid += 1
-        rule_compliant += 1 
+        # 1. Schema check
+        resp = r.get("response", {})
+        if "contexts" in resp and isinstance(resp["contexts"], list):
+            schema_valid += 1
+
+        # 2. Rule compliance check via validate_response
+        try:
+            validate_response(resp)
+            rule_compliant += 1
+        except Exception:
+            pass
         
+        # 3. URL leaks check
         plan_str = json.dumps(r)
-        if "http://" in plan_str or "https://" in plan_str or "www." in plan_str:
+        try:
+            check_no_urls(plan_str)
+        except Exception:
             url_leaks += 1
             
-        for ctx in r.get("response", {}).get("contexts", []):
+        # 4. Deeplink validity check
+        for ctx in resp.get("contexts", []):
             for act in ctx.get("actions", []):
                 if act.get("category") == "auto":
                     total_auto_actions += 1

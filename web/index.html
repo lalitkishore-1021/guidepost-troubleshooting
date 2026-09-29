@@ -2255,32 +2255,56 @@ async function renderEvalLab() {
             }
         }
         
-async function checkApiHealth() {
+let healthCheckAttempts = 0;
+        const maxHealthAttempts = 15;
+
+        async function checkApiHealth() {
+            const healthDot = document.getElementById("healthDot");
+            const healthText = document.getElementById("healthText");
+            
             try {
-                const res = await fetch("https://guidepost-api.onrender.com/health");
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 12000);
+                
+                const res = await fetch("https://guidepost-api.onrender.com/health", { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
                 if (res.ok) {
                     const data = await res.json();
                     if (data.status === "API Ready") {
-                        document.getElementById("healthDot").style.background = "#2E7D32";
-                        document.getElementById("healthText").innerText = "API Ready";
+                        if (healthDot) healthDot.style.background = "#2E7D32";
+                        if (healthText) healthText.innerText = "API Ready";
+                        healthCheckAttempts = 0;
+                        updateSidebarMetrics();
+                        return true;
                     } else {
-                        document.getElementById("healthDot").style.background = "#F57C00";
-                        document.getElementById("healthText").innerText = data.status;
+                        if (healthDot) healthDot.style.background = "#F57C00";
+                        if (healthText) healthText.innerText = data.status;
+                        return true;
                     }
                 } else {
-                    throw new Error("Bad status");
+                    throw new Error("Bad status: " + res.status);
                 }
             } catch(e) {
-                document.getElementById("healthDot").style.background = "#D32F2F";
-                document.getElementById("healthText").innerText = "API Unavailable";
+                healthCheckAttempts++;
+                if (healthCheckAttempts < maxHealthAttempts) {
+                    if (healthDot) healthDot.style.background = "#F57C00";
+                    if (healthText) healthText.innerText = "API Connecting...";
+                    setTimeout(checkApiHealth, 3000);
+                } else {
+                    if (healthDot) healthDot.style.background = "#D32F2F";
+                    if (healthText) healthText.innerText = "API Unavailable (Click to retry)";
+                }
+                return false;
             }
         }
         
-        // Initial check without hardcoding fake status
-        document.getElementById("healthDot").style.background = "#888";
-        document.getElementById("healthText").innerText = "Checking API...";
+        // Initial health check on page startup
+        document.getElementById("healthDot").style.background = "#F57C00";
+        document.getElementById("healthText").innerText = "API Checking...";
         checkApiHealth();
-        updateSidebarMetrics();
+        
+updateSidebarMetrics();
         setInterval(checkApiHealth, 5 * 60 * 1000); // Keep alive every 5 mins
     
     </script>
